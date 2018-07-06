@@ -34,6 +34,7 @@ class key_val_map {
   public:
     void insert(int key, int val, long duration_ms);
     int get(int key); 
+    void cleanup();
 
   private:
     map<int, val_and_expiry> k_v_map;
@@ -58,6 +59,30 @@ int key_val_map::get(int key)
     return k_v_map[key].val;
   }
   return -1;
+}
+
+void key_val_map::cleanup()
+{
+  typedef pair<int, val_and_expiry> MY_PAIR;
+  vector<MY_PAIR> vector_k_v;
+  map<int, val_and_expiry>::iterator it;
+  for(it = k_v_map.begin(); it != k_v_map.end(); it++)
+  {
+    vector_k_v.push_back(make_pair((*it).first, (*it).second));
+  }
+  sort(vector_k_v.begin(), vector_k_v.end(), 
+    [](MY_PAIR a, MY_PAIR b)
+    {
+      return a.second.expiry <= b.second.expiry;
+    }
+  )
+  
+  for (auto p : vector_k_v)
+  {
+    if (p.second.expiry > 0) break;
+    k_v_map.erase(p.first);
+  }
+  return;
 }
 
 int main(int argc, const char* argv[])
