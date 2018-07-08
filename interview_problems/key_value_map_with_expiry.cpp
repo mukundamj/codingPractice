@@ -14,9 +14,6 @@
   solution
 */
 
-
-/* TODO: Implement map cleanup and then calculate time complexity*/
-
 #include <iostream>
 #include <map>
 #include <vector>
@@ -41,6 +38,10 @@ class key_val_map {
     map<int, val_and_expiry> k_v_map;
 };
 
+/*
+  Time complexity = O(lon(N)), where N is the number of elements in the map
+  Space comlexity = O(N)
+*/
 void key_val_map::insert(int key, int val, long duration_ms)
 {
   val_and_expiry v_and_e;
@@ -52,6 +53,10 @@ void key_val_map::insert(int key, int val, long duration_ms)
   return;
 }
 
+/*
+  Time complexity = O(lon(N)), where N is the number of elements in the map
+*/
+
 int key_val_map::get(int key)
 {
   if (k_v_map[key].expiry >=
@@ -61,6 +66,11 @@ int key_val_map::get(int key)
   }
   return -1;
 }
+
+/*
+  Time complexity = O(Nlon(N)), where N is the number of elements in the map
+  Space complexity = O(N);
+*/
 
 void key_val_map::cleanup()
 {
