@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
@@ -20,8 +19,15 @@ class BST
     tree_node<T> *insert_node(tree_node<T> *root, const T val);
     const tree_node<T>* search_node(const tree_node<T> *root, const T val);
     void print_tree(const tree_node<T> *root);
+    void delete_tree(tree_node<T> *root);
 
   public:
+    BST<T>() : m_root{NULL} { cout << "BST created\n"; }
+    ~BST<T>()
+    {
+      delete_tree(m_root);
+      cout << "BST deleted\n";
+    }
     void insert_node(const T val)
     {
       if (m_root) insert_node(m_root, val);
@@ -33,6 +39,9 @@ class BST
     //TODO: create_tree(vector<T> nums);
 };
 
+/*
+  Time complexity = O(log(n)), where n is number of nodes in the tree
+*/
 template<class T>
 tree_node<T>* BST<T>::insert_node(tree_node<T> *root, const T val)
 {
@@ -54,6 +63,9 @@ tree_node<T>* BST<T>::insert_node(tree_node<T> *root, const T val)
   return root;
 }
 
+/*
+  Time complexity = O(log(n)), where n is number of nodes in the tree
+*/
 template<class T>
 const tree_node<T>* BST<T>::search_node(const tree_node<T> *root, const T val)
 {
@@ -67,6 +79,9 @@ const tree_node<T>* BST<T>::search_node(const tree_node<T> *root, const T val)
   return search_node(root->right, val);
 }
 
+/*
+  Time complexity = O(n), where n is number of nodes in the tree
+*/
 template<class T>
 void BST<T>::print_tree(const tree_node<T> *root)
 {
@@ -75,6 +90,20 @@ void BST<T>::print_tree(const tree_node<T> *root)
   cout << root->val << " ";
   print_tree(root->right);
   return;
+}
+
+/*
+  Time complexity = O(n), where n is number of nodes in the tree
+*/
+template<class T>
+void BST<T>::delete_tree(tree_node<T> *root)
+{
+  if (root)
+  {
+    delete_tree(root->left);
+    delete_tree(root->right);
+    delete root;
+  }
 }
 
 int main(int argc, const char *argv[])
