@@ -1,4 +1,7 @@
 #include <iostream>
+#include <unordered_map>
+#include <vector>
+#include <memory>
 
 using namespace std;
 
@@ -18,26 +21,40 @@ class BST
     tree_node<T> *m_root;
     tree_node<T> *insert_node(tree_node<T> *root, const T val);
     const tree_node<T>* search_node(const tree_node<T> *root, const T val);
-    void print_tree(const tree_node<T> *root);
+    void print_tree_helper(const tree_node<T> *root);
+    void print_tree_overload(ostream &out, const tree_node<T> *root) const;
     void delete_tree(tree_node<T> *root);
 
   public:
     BST<T>() : m_root{NULL} { cout << "BST created\n"; }
+
     ~BST<T>()
     {
       delete_tree(m_root);
       cout << "BST deleted\n";
     }
+
     void insert_node(const T val)
     {
       if (m_root) insert_node(m_root, val);
       else m_root = new tree_node<T>(val);
     }
+
     const tree_node<T>* search_node(const T val) { return search_node(m_root, val); }
-    void print_tree() { print_tree(m_root); }
+
+    void print_tree() { print_tree_helper(m_root); }
+
+    friend ostream& operator<< (ostream &out, const BST<T> &tree)
+    {
+      tree.print_tree_overload(out, tree.m_root);
+      return out;
+    }
+   
+    //TODO: BST<T>& clone_tree();
     //TODO: delete_node(T val);
     //TODO: create_tree(vector<T> nums);
 };
+
 
 /*
   Time complexity = O(log(n)), where n is number of nodes in the tree
@@ -83,12 +100,22 @@ const tree_node<T>* BST<T>::search_node(const tree_node<T> *root, const T val)
   Time complexity = O(n), where n is number of nodes in the tree
 */
 template<class T>
-void BST<T>::print_tree(const tree_node<T> *root)
+void BST<T>::print_tree_helper(const tree_node<T> *root)
 {
   if (!root) return;
-  print_tree(root->left);
+  print_tree_helper(root->left);
   cout << root->val << " ";
-  print_tree(root->right);
+  print_tree_helper(root->right);
+  return;
+}
+
+template<class T>
+void BST<T>::print_tree_overload(ostream &out, const tree_node<T> *root) const
+{
+  if (!root) return;
+  print_tree_overload(out, root->left);
+  out << root->val << " ";
+  print_tree_overload(out, root->right);
   return;
 }
 
@@ -124,6 +151,8 @@ int main(int argc, const char *argv[])
 
   cout << "Inorder traversal of the tree is\n";
   my_int_tree.print_tree();
+  cout << "\nPrinting again using operator overloading\n";
+  cout << my_int_tree;
   cout << "\n";
 
   if (my_int_tree.search_node(10))
