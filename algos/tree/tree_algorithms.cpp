@@ -2,59 +2,46 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
-
-using namespace std;
-
-template<class T>
-struct tree_node
-{
-  T val;
-  tree_node *left;
-  tree_node *right;
-  tree_node(T x) : val{x}, left{NULL}, right{NULL} { }
-};
+#include "tree_algorithms.hpp"
 
 template<class T>
-class BST
+BST<T>& BST<T>::operator= (const BST<T>& bst)
 {
-  private:
-    tree_node<T> *m_root;
-    tree_node<T> *insert_node(tree_node<T> *root, const T val);
-    const tree_node<T>* search_node(const tree_node<T> *root, const T val);
-    void print_tree_helper(const tree_node<T> *root);
-    void print_tree_overload(ostream &out, const tree_node<T> *root) const;
-    void delete_tree(tree_node<T> *root);
+  if (this == &bst) return *this;
+  tree_node<T> *root;
+  root = bst.m_root;
+  if (!root) this->m_root = NULL;
+  else
+  {
+    vector<tree_node<T> *> queue;
+    queue.push_back(root);
+    unordered_map<int, tree_node<T>*> map;
+    map[root->val] = new tree_node<T>(root->val);
 
-  public:
-    BST<T>() : m_root{NULL} { cout << "BST created\n"; }
-
-    ~BST<T>()
+    while (!queue.empty())
     {
-      delete_tree(m_root);
-      cout << "BST deleted\n";
+      auto r = queue.back();
+      queue.pop_back();
+      tree_node<T> *clone_root = map[r->val];
+      if (r->left)
+      {
+        tree_node<T> *left = new tree_node<T>(r->left->val);
+        queue.push_back(r->left);
+        clone_root->left = left;
+        map[left->val] = left;
+      }
+      if (r->right)
+      {
+        tree_node<T> *right = new tree_node<T>(r->right->val);
+        queue.push_back(r->right);
+        clone_root->right = right;
+        map[right->val] = right;
+      }
     }
-
-    void insert_node(const T val)
-    {
-      if (m_root) insert_node(m_root, val);
-      else m_root = new tree_node<T>(val);
-    }
-
-    const tree_node<T>* search_node(const T val) { return search_node(m_root, val); }
-
-    void print_tree() { print_tree_helper(m_root); }
-
-    friend ostream& operator<< (ostream &out, const BST<T> &tree)
-    {
-      tree.print_tree_overload(out, tree.m_root);
-      return out;
-    }
-   
-    //TODO: BST<T>& clone_tree();
-    //TODO: delete_node(T val);
-    //TODO: create_tree(vector<T> nums);
-};
-
+    this->m_root = map[root->val];
+  }
+  return *this;
+}
 
 /*
   Time complexity = O(log(n)), where n is number of nodes in the tree
@@ -164,6 +151,16 @@ int main(int argc, const char *argv[])
     cout << "-1 is found in the tree\n";
   else 
     cout << "-1 is not found in the tree\n";
+
+  {
+    BST<int> my_second_int_tree;
+    my_second_int_tree = my_int_tree;
+    my_second_int_tree.insert_node(11);
+    cout << "Printing modified cloned tree\n";
+    cout << my_second_int_tree;
+    cout << "\n";
+  }
+  cout << "Cloned tree is destroyed but it doesn't affect the original tree\n";
 
   return 0;
 }
