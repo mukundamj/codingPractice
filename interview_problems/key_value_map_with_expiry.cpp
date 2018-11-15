@@ -20,6 +20,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <algorithm>
 #include <chrono> //Required for system_clock
 #include <unistd.h> //Required for sleep(int)
 
@@ -75,7 +76,7 @@ void key_val_map::cleanup()
     {
       return a.second.expiry <= b.second.expiry;
     }
-  )
+  );
   
   for (auto p : vector_k_v)
   {
@@ -90,19 +91,26 @@ int main(int argc, const char* argv[])
   key_val_map my_k_v_map;
   //The below 2 print statements show that for each second the time value increases
   //by 1000,000
-  printf("Time at 0s = %lld\n",
+  printf("Time at 0s = %ld\n",
     static_cast<int64_t> (std::chrono::system_clock::now().time_since_epoch().count()));
   sleep(1);
-  printf("Time at 1s = %lld\n",
+  printf("Time at 1s = %ld\n",
     static_cast<int64_t> (std::chrono::system_clock::now().time_since_epoch().count()));
 
-  my_k_v_map.insert(1, 1, 2000000);
-  my_k_v_map.insert(2, 4, 4000000);
+  my_k_v_map.insert(1, 1, 2000000000);
+  my_k_v_map.insert(2, 4, 4000000000);
   printf("Square of 1 = %d\n", my_k_v_map.get(1));
   printf("Square of 2 = %d\n", my_k_v_map.get(2));
   sleep(2);
   cout << "After waiting for 2 seconds\n";
   printf("Square of 1 = %d\n", my_k_v_map.get(1));
   printf("Square of 2 = %d\n", my_k_v_map.get(2));
+  
+  printf("Cleaning up the map\n");
+  my_k_v_map.cleanup();
+
+  printf("Square of 1 = %d\n", my_k_v_map.get(1));
+  printf("Square of 2 = %d\n", my_k_v_map.get(2));
+
   return 0;
 }
