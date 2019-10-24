@@ -1,3 +1,4 @@
+//Execute the binary of this file as: cat nums.txt | ./binary
 #include <iostream>
 #include <vector>
 #include <algorithm>
