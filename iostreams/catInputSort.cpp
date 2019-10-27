@@ -1,3 +1,5 @@
+//Problem statement: A file containing numbers is piped as input to the executable,
+//the executable should store the numbers, sort them and print the sorted output.
 //Execute the binary of this file as: cat nums.txt | ./binary
 #include <iostream>
 #include <vector>
