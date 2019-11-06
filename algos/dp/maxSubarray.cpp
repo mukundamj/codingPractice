@@ -3,6 +3,7 @@
 
 using namespace std;
 
+//The following solution has been tested, it's time complexity is O(n) and space complexity is O(n).
 class Solution {
 public:
   //Following method uses dynamic programming apprach
@@ -18,6 +19,34 @@ public:
     return max;
   }
 };
+
+/*
+//The following solution is not tested, it's time complexity is O(n) and space complexity is constant.
+class Solution {
+public:
+  //Following method uses dynamic programming apprach
+  int maxSubArray(vector<int>& nums) {
+    if (!nums.size()) return INT_MIN;
+    
+    int maxSubArraySum = nums[0];
+    int temp = 0;
+
+    for (int i = 1; i < nums.size(); i++) {
+      if ((temp + nums[i]) < 0)
+      {
+        temp = 0;
+      }
+      else
+      {
+        temp = temp + nums[i];
+        maxSubArraySum = max(temp, maxSubArraySum);
+      }
+    }   
+    
+    return maxSubArraySum;
+  }
+};
+*/
 
 int main() {
   Solution S;
