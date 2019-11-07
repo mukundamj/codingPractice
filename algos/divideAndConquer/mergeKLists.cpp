@@ -29,7 +29,7 @@ class Solution {
 //  return head1;
 //}
 
-//Low time complexity: mlog(n). Where n = number of lists and m = average number of elements in each list
+//Low time complexity: mlog(n). Where n = number of lists and m = total number of elements covering all lists
 ListNode* Solution::mergeKLists(vector<ListNode*>& lists) {
   if (lists.size() == 0) return NULL;
   while (lists.size() != 1) {
