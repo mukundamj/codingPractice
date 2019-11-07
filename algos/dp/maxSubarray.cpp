@@ -21,7 +21,7 @@ public:
 };
 
 /*
-//The following solution is not tested, it's time complexity is O(n) and space complexity is constant.
+//The following solution has been tested, it's time complexity is O(n) and space complexity is constant.
 class Solution {
 public:
   //Following method uses dynamic programming apprach
@@ -31,10 +31,11 @@ public:
     int maxSubArraySum = nums[0];
     int temp = 0;
 
-    for (int i = 1; i < nums.size(); i++) {
+    for (int i = 0; i < nums.size(); i++) {
       if ((temp + nums[i]) < 0)
       {
         temp = 0;
+        maxSubArraySum = max(maxSubArraySum, nums[i]);
       }
       else
       {
