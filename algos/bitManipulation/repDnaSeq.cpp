@@ -27,6 +27,22 @@ vector<string> Solution::findRepeatedDnaSequences(string s) {
   }
   return result;
 }
+
+The below code uses the same algorithm as above, buy has lesser number of code lines.
+This code has not been tested
+
+vector<string> Solution::findRepeatedDnaSequences(string s) {
+  unordered_map<string, int> dnaSeq;
+  vector<string> result;
+  for (int i = 0; i + 9 < s.size(); i++) {
+    string subStr = s.substr(i, 10);
+    if (dnaSeq[subStr]++ == 1) {
+      result.push_back(subStr);
+    }
+  }
+  return result;
+}
+
 */
 
 /* 
