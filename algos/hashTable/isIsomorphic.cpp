@@ -8,6 +8,12 @@ class Solution {
     bool isIsomorphic(string , string );
 };
 
+/*
+Given two strings, s and t, are said to be isomorphic if a letter in s is mapped to the same
+letter in t in all occurences, and similarly a letter in t is mapped to the same letter
+in s in all occurences. For example, the strings abca and defd are isomorphic; however, the
+strings abca and defg are not isomporphic.
+*/
 bool Solution::isIsomorphic(string s, string t) {
   if (s.size() != t.size()) return false;
   vector<char> sMap(255, '-'), tMap(255, '-');
@@ -18,7 +24,6 @@ bool Solution::isIsomorphic(string s, string t) {
   }
   return true;
 }
-
 
 
 int main(int argc, const char* argv[]) {
