@@ -22,18 +22,18 @@ struct Node {
   of their root labels.
 */
 vector<int> Solution::findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
-  vector<int> buf1;
-  vector<int> buf2;
+  vector<int> leafNodesBeforeGraphMutation;
+  vector<int> leafNodesAfterGraphMutation;
  
   if (n == 1) {
-    buf1.push_back(0);
-    return buf1;
+    leafNodesBeforeGraphMutation.push_back(0);
+    return leafNodesBeforeGraphMutation;
   }
 
   if (n == 2) {
-    buf1.push_back(0);
-    buf1.push_back(1);
-    return buf1;
+    leafNodesBeforeGraphMutation.push_back(0);
+    leafNodesBeforeGraphMutation.push_back(1);
+    return leafNodesBeforeGraphMutation;
   }
 
   //make graph
@@ -45,23 +45,23 @@ vector<int> Solution::findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
 
   //find all the leaf nodes
   for (int i = 0; i < n; i++) {
-    if (nodes[i].isLeaf()) buf1.push_back(i); 
+    if (nodes[i].isLeaf()) leafNodesBeforeGraphMutation.push_back(i); 
   }
 
   //remove leaf nodes until the root/roots is/are found
   while (1) {
-    for (int leaf : buf1) {
+    for (int leaf : leafNodesBeforeGraphMutation) {
       cout << "Processing leaf node " << leaf << endl;
       for (auto neighbor : nodes[leaf].neighbor) {
         cout << "Deleting leaf node which is neighbor of " << neighbor << endl;
         nodes[neighbor].neighbor.erase(leaf);
-        if (nodes[neighbor].isLeaf()) buf2.push_back(neighbor);
+        if (nodes[neighbor].isLeaf()) leafNodesAfterGraphMutation.push_back(neighbor);
       }
     }
-    if (buf2.empty()) return buf1;
-    buf1.clear();
-    buf1 = buf2;
-    buf2.clear(); 
+    if (leafNodesAfterGraphMutation.empty()) return leafNodesBeforeGraphMutation;
+    leafNodesBeforeGraphMutation.clear();
+    leafNodesBeforeGraphMutation = leafNodesAfterGraphMutation;
+    leafNodesAfterGraphMutation.clear(); 
   }
 }
 
