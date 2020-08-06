@@ -5,19 +5,17 @@
 #include <vector>
 #include <algorithm>
 
-using namespace std;
-
 int main (int argc, const char * argv[]) {
- vector<int> nums;
- string input;
+ std::vector<int> nums;
+ std::string input;
  while (getline(std::cin, input)) {
-   nums.push_back(stoi(input));
+   nums.push_back(std::stoi(input));
  }
- sort(nums.begin(), nums.end());
- cout << endl;
+ std::sort(nums.begin(), nums.end());
+ std::cout << endl;
  for (auto n : nums) {
-     printf("%d, ", n);
-   }
- cout << endl;
+     std::cout << n;
+ }
+ std::cout << endl;
  return 0;
 }
