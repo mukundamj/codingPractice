@@ -16,7 +16,7 @@ class Solution {
 int Solution::minSubArrayLen(int s, vector<int>& nums) {
   if (nums.size() == 0) return 0;
   int len = INT_MAX, start = 0, end = 0, sum = 0;
-  while (end < nums.size() && start <= end) {
+  while (end < nums.size() && start <= end) { //Seems like the condition start <= end is redundant; test it and remove if not required.
     sum += nums[end];
     if (sum < s) {
       end++;

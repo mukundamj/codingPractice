@@ -1,3 +1,5 @@
+//Problem statement: Write a function to swap strings pointed by two pointers.
+//The two pointers are const char * s1 = "Geeks" and const char * s2 = "ForGeeks"
 #include <iostream>
 
 using namespace std;
