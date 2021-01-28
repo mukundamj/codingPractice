@@ -6,6 +6,17 @@ HashTable::HashTable(size_t size)
 {
 }
 
+// In the STL implementation a rehashing is done if the load factor crosses a threshold.
+// The following notes were copied from https://www.cplusplus.com
+// The load factor is the ratio between the number of elements in the container (its size)
+// and the number of buckets (bucket_count):
+// load_factor = size / bucket_count
+// 
+// The load factor influences the probability of collision in the hash table
+// (i.e., the probability of two elements being located in the same bucket).
+// The container automatically increases the number of buckets to keep the load factor below
+// a specific threshold (its max_load_factor), causing a rehash each time an expansion is needed.
+
 void HashTable::Insert(const Node<std::string>& n)
 {
     if (Search(n.Key())) return;
@@ -41,6 +52,10 @@ void HashTable::Print() const
     }
 }
 
+// In the STL implementation HashFunction is more sophisticated. The HashFunction
+// can take an int or string or any other key and could generate a hash value of type
+// size_t. The modulus of this hash value w.r.t the bucket size of the hash table is
+// calculated and returned.
 size_t HashTable::HashFunction(const int key) const
 {
     return key % m_numberOfBuckets;
