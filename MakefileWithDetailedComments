@@ -2,6 +2,8 @@
 #https://stackoverflow.com/questions/5178125/how-to-place-object-files-in-separate-subdirectory,
 #and adapted to my use case.
 
+#The comments to understand 'make' are derived from https://www.gnu.org/software/make/manual/make.html 
+
 #Compiler and Linker
 CC          := g++
 
@@ -33,6 +35,7 @@ CFLAGS      := -std=c++11
 #Example: If source file paths are src/a.cpp, src/b.cpp and src/c.cpp, the variable
 #SOURCES = 'src/a.cpp src/b.cpp src/c.cpp'
 SOURCES     := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+
 #The syntax for patsubst (pattern substitution) command is $(patsubst pattern,replacement,text)
 #Every occurence of 'pattern' in the 'text' is replaced by the 'replacement'. '%" acts as a
 #wildcard matching any number of characters in a word.
@@ -54,19 +57,30 @@ remake: deep-clean all
 #resources: directories
 #	@cp $(RESDIR)/* $(TARGETDIR)/
 
-#Make the Directories
+#Normally make prints each line of the recipe before it is executed. We call this echoing because it
+#gives the appearance that you are typing the lines yourself. When a line starts with ‘@’, the echoing
+#of that line is suppressed.
+#The following shell command makes TARGETDIR and BUILDDIR if they are not already present
 directories:
 	@mkdir -p $(TARGETDIR)
 	@mkdir -p $(BUILDDIR)
 
-#Clean only Objecst
+#$(RM) is variable has 'rm -f'. So the below shell command forcefully removes the BUILDDIR, thus
+#cleaning object files.
 clean:
-	@$(RM) -rf $(BUILDDIR)
+	@$(RM) -r $(BUILDDIR)
 
 #Full Clean, Objects and Binaries
 deep-clean: clean
-	@$(RM) -rf $(TARGETDIR)
+	@$(RM) -r $(BUILDDIR)
+	@$(RM) -r $(TARGETDIR)
 
+#The include directive tells make to suspend reading the current makefile and read one or more other
+#makefiles before continuing. Its syntax is as below:
+#    include filenames...
+#If you want make to simply ignore a makefile which does not exist or cannot be remade, with no error
+#message, use the -include directive instead of include, like this:
+#    -include filenames...
 #Pull in dependency info for *existing* .o files
 -include $(OBJECTS:.$(OBJEXT)=.$(DEPEXT))
 
