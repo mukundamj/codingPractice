@@ -10,7 +10,7 @@ CC          := g++
 #The Target Binary Program
 TARGET      := customLibTest
 
-#The Directories, Source, Includes, Objects, Binary and Resources
+#The Directories, Source, Includes, Objects, Binary, and Resources
 SRCDIR      := src
 INCDIR      := inc
 BUILDDIR    := obj
@@ -88,13 +88,13 @@ deep-clean: clean
 #how do you write the ‘cc’ command so that it operates on the right source file name? You cannot write
 #the name in the recipe, because the name is different each time the implicit rule is applied.
 #What you do is use a special feature of make, the automatic variables. There are various automatic
-#variables, lets understnd the two used in this file
+#variables, let's understand the ones used in this file
 #
 # $^ : The names of all the prerequisites, with spaces between them.
 # $@ : The file name of the target of the rule.
 # $< : The name of the first prerequisite.
 
-#The -o option places output in file file. This applies to whatever sort of output is being produced,
+#The -o option places output in file. This applies to whatever sort of output is being produced,
 #whether it be an executable file, an object file, an assembler file or preprocessed C code.
 #If -o is not specified, the default is to put an executable file in a.out, the object file for
 #source.suffix in source.o, its assembler file in source.s, a precompiled header file in source.suffix.gch,
