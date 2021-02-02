@@ -2,6 +2,8 @@
 #include <list>
 #include <vector>
 
+#pragma once
+
 template<typename ValueType>
 class Node
 {
