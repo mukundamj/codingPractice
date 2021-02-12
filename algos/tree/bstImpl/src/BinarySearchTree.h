@@ -1,4 +1,8 @@
-#define pragma
+//#pragma once directive asks the compiler to include a header file only a single time,
+//no matter how many times it has been imported. It's equivalent to an include guard that
+//prevents the file from being processed multiple times.
+//Source of above info: https://www.cprogramming.com/reference/preprocessor/pragma.html
+#pragma once
 
 template<typename T = int>
 struct TreeNode
