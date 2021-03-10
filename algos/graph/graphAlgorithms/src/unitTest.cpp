@@ -6,29 +6,21 @@ int main(int argc, const char* argv[])
 {
     GraphFixedSize graphFixedSize(8);
 
-    std::vector<uint32_t> neighbors{1, 4};
-    graphFixedSize.setNeighborsOfANode(0, neighbors);
+    graphFixedSize.setNeighborsOfANode(0, {1, 4});
 
-    neighbors = {0, 5};
-    graphFixedSize.setNeighborsOfANode(1, neighbors);
+    graphFixedSize.setNeighborsOfANode(1, {0, 5});
 
-    neighbors = {3, 5, 6};
-    graphFixedSize.setNeighborsOfANode(2, neighbors);
+    graphFixedSize.setNeighborsOfANode(2, {3, 5, 6});
 
-    neighbors = {2, 6, 7};
-    graphFixedSize.setNeighborsOfANode(3, neighbors);
+    graphFixedSize.setNeighborsOfANode(3, {2, 6, 7});
 
-    neighbors = {0};
-    graphFixedSize.setNeighborsOfANode(4, neighbors);
+    graphFixedSize.setNeighborsOfANode(4, {0});
 
-    neighbors = {1, 2, 6};
-    graphFixedSize.setNeighborsOfANode(5, neighbors);
+    graphFixedSize.setNeighborsOfANode(5, {1, 2, 6});
 
-    neighbors = {2, 3, 5, 7};
-    graphFixedSize.setNeighborsOfANode(6, neighbors);
+    graphFixedSize.setNeighborsOfANode(6, {2, 3, 5, 7});
 
-    neighbors = {3, 6};
-    graphFixedSize.setNeighborsOfANode(7, neighbors);
+    graphFixedSize.setNeighborsOfANode(7, {3, 6});
 
     graphFixedSize.printGraph();
 

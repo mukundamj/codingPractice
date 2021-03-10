@@ -25,6 +25,7 @@ OBJEXT      := o
 #LIB         := -fopenmp -lm -larmadillo
 #INC         := -I$(INCDIR) -I/usr/local/include
 #INCDEP      := -I$(INCDIR)
+LIB         := -lgtest
 CFLAGS      := -std=c++11
 
 #---------------------------------------------------------------------------------

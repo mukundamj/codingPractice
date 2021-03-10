@@ -24,6 +24,8 @@ public:
     void setNeighborsOfANode(const uint32_t node, const std::vector<uint32_t>& neighbors);
 
     uint32_t shortestPathBFS(const uint32_t source, const uint32_t dest);
+    uint32_t predecessorBFS(const uint32_t source, const uint32_t node);
+    uint32_t size() const;
     void printDistanceToAllNodesBFS(const uint32_t source);
     void printPredecessorOfAllNodesBFS(const uint32_t source);
     void printGraph();
@@ -72,6 +74,17 @@ uint32_t GraphFixedSize::shortestPathBFS(const uint32_t source, const uint32_t d
     return m_distance[dest];
 }
 
+uint32_t GraphFixedSize::predecessorBFS(const uint32_t source, const uint32_t node)
+{
+    runBFS(source);
+    return m_predecessor[node];
+}
+
+uint32_t GraphFixedSize::size() const
+{
+    return m_adjacencyList.size();
+}
+
 void GraphFixedSize::printDistanceToAllNodesBFS(const uint32_t source)
 {
     runBFS(source);
@@ -102,15 +115,17 @@ void GraphFixedSize::printPredecessorOfAllNodesBFS(const uint32_t source)
 
 void GraphFixedSize::printGraph()
 {
+    std::cout << "################### Graph nodes represented as adjacency list ##################" << std::endl;
     for (int i = 0; i < m_adjacencyList.size(); i++)
     {
-        std::cout << i << " ";
+        std::cout << i;
         for (auto n : m_adjacencyList[i])
         {
             std::cout << "->" << n; 
         }
         std::cout << std::endl;
     }
+    std::cout << "################################################################################" << std::endl;
 }
 
 void GraphFixedSize::resetColorPrdecessorDistance()
