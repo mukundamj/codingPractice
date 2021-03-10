@@ -115,7 +115,7 @@ void GraphFixedSize::printPredecessorOfAllNodesBFS(const uint32_t source)
 
 void GraphFixedSize::printGraph()
 {
-    std::cout << "################### Graph nodes represented as adjacency list ##################" << std::endl;
+    std::cout << "\n################### Graph nodes represented as adjacency list ##################\n";
     for (int i = 0; i < m_adjacencyList.size(); i++)
     {
         std::cout << i;
@@ -125,7 +125,7 @@ void GraphFixedSize::printGraph()
         }
         std::cout << std::endl;
     }
-    std::cout << "################################################################################" << std::endl;
+    std::cout << "\n################################################################################\n";
 }
 
 void GraphFixedSize::resetColorPrdecessorDistance()

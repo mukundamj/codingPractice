@@ -25,7 +25,29 @@ OBJEXT      := o
 #LIB         := -fopenmp -lm -larmadillo
 #INC         := -I$(INCDIR) -I/usr/local/include
 #INCDEP      := -I$(INCDIR)
-LIB         := -lgtest
+
+# Linker options
+# -L option indicates the directory for searching a library file
+# -l option indicates a library file
+# Sometimes one may have to specify the library location using -L option as below.  
+#LIB         := -L/usr/local/lib -l:libgtest.a -l:libgtest_main.a -L/usr/lib/x86_64-linux-gnu -lpthread 
+# For standard library paths like /usr/local/lib and /usr/lib -L option could be omitted
+
+# gcc, by default, prefers to link to shared libraries(example abc.so), even if the corresponding
+# archive(static library, example abc.a) exists. To tell gcc to prefer static library "-Wl, -Bstatic"
+# option could be used or the static library could be explicity specified as "-l:libabc.a"
+# The following is an example of using some of the libraries as static and some as dynamic.
+# gcc -Wl,-Bstatic -lz -lfoo -Wl,-Bdynamic -lbar -Wl,--as-needed
+# --as-needed will drop any unused dynamic library
+
+# Gtest framework is used to test the features here hence gtest library files must be linked during
+# linking stage. Linking the gtest files dynamically is causing seg fault (reason yet to be found),
+# hence the linking is done statically.
+# The libraries are parsed from right to left so for this use case lpthread should come to the
+# right as libgtest_main and libgtest depends on it. If lpthread is specified as the first option
+# from left linker will throw undefined reference error.
+
+LIB         := -l:libgtest.a -l:libgtest_main.a -lpthread 
 CFLAGS      := -std=c++11
 
 #---------------------------------------------------------------------------------
