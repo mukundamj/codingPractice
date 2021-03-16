@@ -47,25 +47,13 @@ private:
     uint32_t m_sourceNodeForBFS;
 };
 
-/*
-template <typename T>
-class GraphVariableSize
-{
-    
-    uint32_t shortestPathBFS(const T& source, const T& dest) const;
-
-private:
-    std::unordered_map<T, std::unordered_set<T>> m_adjacencyList;
-}
-*/
-
 void GraphFixedSize::setNeighborsOfANode(const uint32_t node, const std::vector<uint32_t>& neighbors)
 {
     if( m_adjacencyList[node] != neighbors)
     {
         m_adjacencyList[node] = neighbors;
+        m_graphTraversalIsStale = true;
     }
-    m_graphTraversalIsStale = true;
 }
 
 uint32_t GraphFixedSize::shortestPathBFS(const uint32_t source, const uint32_t dest)
@@ -166,6 +154,6 @@ void GraphFixedSize::runBFS(const uint32_t source)
         m_color[node] = 'b';
     }
 
-    m_graphTraversalIsStale = false;
     m_sourceNodeForBFS = source;
+    m_graphTraversalIsStale = false;
 }

@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
-#include "graph.h"
+#include "graphFixedSize.h"
+#include "graphVariableSize.h"
 #include "gtest/gtest.h"
 
 //using ::testing::EmptyTestEventListener;
@@ -77,7 +78,6 @@ protected:  // You should make the members protected s.t. they can be
      // should define it if you need to initialize the variables.
      // Otherwise, this can be skipped.
     void SetUp() override {
-        std::cout << "\nSetting up the test fixture\n";
         graphFixedSize.setNeighborsOfANode(0, {1, 4});
         graphFixedSize.setNeighborsOfANode(1, {0, 5});
         graphFixedSize.setNeighborsOfANode(2, {3, 5, 6});
@@ -86,8 +86,6 @@ protected:  // You should make the members protected s.t. they can be
         graphFixedSize.setNeighborsOfANode(5, {1, 2, 6});
         graphFixedSize.setNeighborsOfANode(6, {2, 3, 5, 7});
         graphFixedSize.setNeighborsOfANode(7, {3, 6});
-
-        graphFixedSize.printGraph();
     }
 
     // virtual void TearDown() will be called after each test is run.
@@ -102,6 +100,11 @@ protected:  // You should make the members protected s.t. they can be
     //    ...    //It could implement and do some checks using ASSERT_EQ, EXPECT_EQ etc.
     //}
 
+    void printGraph()
+    {
+        graphFixedSize.printGraph();
+    }
+
     // Declares the variables your tests want to use.
 
     GraphFixedSize graphFixedSize{8};
@@ -110,9 +113,14 @@ protected:  // You should make the members protected s.t. they can be
 // When you have a test fixture, you define a test using TEST_F
 // instead of TEST.
 
+TEST_F(GraphFixedSizeBFS, printGraph)
+{
+    // This is a dummmy test just used for printing the graph
+    printGraph();
+}
+
 TEST_F(GraphFixedSizeBFS, DistanceFromSource)
 {
-    std::cout << "Tesing distances calculated as per BFS" << std::endl;
     std::vector<uint32_t> expectedDistanceFromSrcNode0 = {0, 1, 3, 4, 1, 2, 3, 4};
     std::vector<uint32_t> expectedDistanceFromSrcNode4 = {1, 2, 4, 5, 0, 3, 4, 5};
     std::vector<uint32_t> expectedDistanceFromSrcNode7 = {4, 3, 2, 1, 5, 2, 1, 0};
@@ -138,7 +146,6 @@ TEST_F(GraphFixedSizeBFS, DistanceFromSource)
 
 TEST_F(GraphFixedSizeBFS, PredecessorNode)
 {
-    std::cout << "Tesing predecessors determined as per BFS" << std::endl;
     std::vector<uint32_t> expectedPredecessorWithSrcNode1 = {1, 4294967295, 5, 2, 0, 1, 5, 6};
     std::vector<uint32_t> expectedPredecessorWithSrcNode3 = {1, 5, 3, 4294967295, 0, 2, 3, 3};
     std::vector<uint32_t> expectedPredecessorWithSrcNode5 = {1, 5, 5, 2, 0, 4294967295, 5, 6};
@@ -159,6 +166,94 @@ TEST_F(GraphFixedSizeBFS, PredecessorNode)
     for (int i = 0; i < graphFixedSize.size(); i++)
     {
         EXPECT_EQ(expectedPredecessorWithSrcNode5[i], graphFixedSize.predecessorBFS(sourceNode, i));
+    }
+}
+
+
+class GraphVariableSizeBFS : public testing::Test {
+protected:
+
+    void SetUp() override {
+        graphVariableSize.setNeighborsOfANode(0, {1, 4});
+        graphVariableSize.setNeighborsOfANode(1, {0, 5});
+        graphVariableSize.setNeighborsOfANode(2, {3, 5, 6});
+        graphVariableSize.setNeighborsOfANode(3, {2, 6, 7});
+        graphVariableSize.setNeighborsOfANode(4, {0});
+        graphVariableSize.setNeighborsOfANode(5, {1, 2, 6});
+        graphVariableSize.setNeighborsOfANode(6, {2, 3, 5, 7});
+        graphVariableSize.setNeighborsOfANode(7, {3, 6});
+    }
+
+    void printGraph()
+    {
+        graphVariableSize.printGraph();
+    }
+
+    GraphVariableSize<uint32_t> graphVariableSize;
+};
+
+TEST_F(GraphVariableSizeBFS, printGraph)
+{
+    // This is a dummmy test just used for printing the graph
+    printGraph();
+}
+
+TEST_F(GraphVariableSizeBFS, DistanceFromSource)
+{
+    std::vector<uint32_t> expectedDistanceFromSrcNode0 = {0, 1, 3, 4, 1, 2, 3, 4};
+    std::vector<uint32_t> expectedDistanceFromSrcNode4 = {1, 2, 4, 5, 0, 3, 4, 5};
+    std::vector<uint32_t> expectedDistanceFromSrcNode7 = {4, 3, 2, 1, 5, 2, 1, 0};
+
+    uint32_t sourceNode = 0;
+    for (int i = 0; i < graphVariableSize.size(); i++)
+    {
+        EXPECT_EQ(expectedDistanceFromSrcNode0[i], graphVariableSize.shortestPathBFS(sourceNode, i));
+    }
+
+    sourceNode = 4;
+    for (int i = 0; i < graphVariableSize.size(); i++)
+    {
+        EXPECT_EQ(expectedDistanceFromSrcNode4[i], graphVariableSize.shortestPathBFS(sourceNode, i));
+    }
+
+    sourceNode = 7;
+    for (int i = 0; i < graphVariableSize.size(); i++)
+    {
+        EXPECT_EQ(expectedDistanceFromSrcNode7[i], graphVariableSize.shortestPathBFS(sourceNode, i));
+    }
+}
+
+TEST_F(GraphVariableSizeBFS, PredecessorNode)
+{
+    // The drawback of using template implementation for GraphVariableSize is that the
+    // predecessor list cannot be initialized with std::numeric_limits<T>::max(). This is
+    // because this function call max() may not compile for all types of T. When the type of
+    // T is uint32_t predecessor list is initialized with 0s hence the predecessor of source
+    // node will always be 0.
+    std::vector<uint32_t> expectedPredecessorWithSrcNode1 = {1, 0, 5, 2, 0, 1, 5, 6};
+    // The predecessor for node 5 is different from that of the GraphFixedSize becasue
+    // there are multiple shortest paths possible from source node 3. The GraphVariableSize 
+    // uses std::unordered_set for adjacency list, the order of node processing will be different
+    // from that in GraphFixedSize which used std::vector for adjacency list.
+    std::vector<uint32_t> expectedPredecessorWithSrcNode3 = {1, 5, 3, 0, 0, 6, 3, 3};
+    std::vector<uint32_t> expectedPredecessorWithSrcNode5 = {1, 5, 5, 2, 0, 0, 5, 6};
+
+    uint32_t sourceNode = 1;
+    for (int i = 0; i < graphVariableSize.size(); i++)
+    {
+        EXPECT_EQ(expectedPredecessorWithSrcNode1[i], graphVariableSize.predecessorBFS(sourceNode, i));
+    }
+
+    sourceNode = 3;
+    for (int i = 0; i < graphVariableSize.size(); i++)
+    {
+        EXPECT_EQ(expectedPredecessorWithSrcNode3[i], graphVariableSize.predecessorBFS(sourceNode, i));
+    }
+
+    sourceNode = 5;
+    for (int i = 0; i < graphVariableSize.size(); i++)
+    {
+        EXPECT_EQ(expectedPredecessorWithSrcNode5[i], graphVariableSize.predecessorBFS(sourceNode, i));
     }
 }
 

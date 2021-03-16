@@ -71,10 +71,13 @@ SOURCES     := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS     := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT)))
 
 #Defauilt Make
-all: directories $(TARGET)
+all: directories $(TARGET) runUnitTest
 
 #Remake
 remake: deep-clean all
+
+runUnitTest:
+	./$(TARGETDIR)/$(TARGET)
 
 ##Copy Resources from Resources Directory to Target Directory
 #resources: directories
