@@ -81,6 +81,7 @@ void GraphVariableSize<T>::printGraph() const
     std::cout << "\n################################################################################\n";
 }
 
+// Note that the implementation of BFS here is slightly different from that of GraphFixedSize
 template <typename T>
 void GraphVariableSize<T>::runBFS(const T& source)
 {

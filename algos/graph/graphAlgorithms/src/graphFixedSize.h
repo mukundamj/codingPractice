@@ -13,101 +13,71 @@ class GraphFixedSize
 public:
     GraphFixedSize(size_t s)
         :
-        m_adjacencyList(s),
-        m_color(s, 'w'),
-        m_distance(s, std::numeric_limits<uint32_t>::max()),
-        m_predecessor(s, std::numeric_limits<uint32_t>::max()),
-        m_graphTraversalIsStale(true),
-        m_sourceNodeForBFS(std::numeric_limits<uint32_t>::max())
+        m_bfsAdjacencyList(s),
+        m_bfsColor(s, 'w'),
+        m_bfsDistance(s, std::numeric_limits<uint32_t>::max()),
+        m_bfsPredecessor(s, std::numeric_limits<uint32_t>::max()),
+        m_bfsGraphTraversalIsStale(true),
+        m_bfsSourceNode(std::numeric_limits<uint32_t>::max())
     {}
 
     void setNeighborsOfANode(const uint32_t node, const std::vector<uint32_t>& neighbors);
 
     uint32_t shortestPathBFS(const uint32_t source, const uint32_t dest);
     uint32_t predecessorBFS(const uint32_t source, const uint32_t node);
-    uint32_t size() const;
-    void printDistanceToAllNodesBFS(const uint32_t source);
-    void printPredecessorOfAllNodesBFS(const uint32_t source);
-    void printGraph();
 
-    //int shortestPathDFS(const int source, const int dest) const;
-    //void printDistanceToAllNodesDFS(const int source) const;
-    //void printPredecessorOfAllNodesDFS(const int source) const;
+    uint32_t shortestPathDFS(const uint32_t source, const uint32_t dest);
+    uint32_t predecessorDFS(const uint32_t source, const uint32_t node);
+
+    uint32_t size() const;
+    void printGraph();
 
 private:
     void runBFS(const uint32_t source);
-    void resetColorPrdecessorDistance();
-    //void runDFS(const int source);
+    void resetBfsColorPrdecessorDistance();
+    void runDFS(const int source);
 
-    std::vector<std::vector<uint32_t>> m_adjacencyList;
-    std::vector<char> m_color;
-    std::vector<uint32_t> m_distance;
-    std::vector<uint32_t> m_predecessor;
-    bool m_graphTraversalIsStale;
-    uint32_t m_sourceNodeForBFS;
+    std::vector<std::vector<uint32_t>> m_bfsAdjacencyList;
+    std::vector<char> m_bfsColor;
+    std::vector<uint32_t> m_bfsDistance;
+    std::vector<uint32_t> m_bfsPredecessor;
+    bool m_bfsGraphTraversalIsStale;
+    uint32_t m_bfsSourceNode;
 };
 
 void GraphFixedSize::setNeighborsOfANode(const uint32_t node, const std::vector<uint32_t>& neighbors)
 {
-    if( m_adjacencyList[node] != neighbors)
+    if( m_bfsAdjacencyList[node] != neighbors)
     {
-        m_adjacencyList[node] = neighbors;
-        m_graphTraversalIsStale = true;
+        m_bfsAdjacencyList[node] = neighbors;
+        m_bfsGraphTraversalIsStale = true;
     }
 }
 
 uint32_t GraphFixedSize::shortestPathBFS(const uint32_t source, const uint32_t dest)
 {
     runBFS(source);
-    return m_distance[dest];
+    return m_bfsDistance[dest];
 }
 
 uint32_t GraphFixedSize::predecessorBFS(const uint32_t source, const uint32_t node)
 {
     runBFS(source);
-    return m_predecessor[node];
+    return m_bfsPredecessor[node];
 }
 
 uint32_t GraphFixedSize::size() const
 {
-    return m_adjacencyList.size();
-}
-
-void GraphFixedSize::printDistanceToAllNodesBFS(const uint32_t source)
-{
-    runBFS(source);
-
-    std::cout << "Distance from the source node, " << source << ", to all other nodes" << std::endl;
-
-    for (auto d : m_distance)
-    {
-        std::cout << " " << d;
-    }
-
-    std::cout << std::endl;
-}
-
-void GraphFixedSize::printPredecessorOfAllNodesBFS(const uint32_t source)
-{
-    runBFS(source);
-
-    std::cout << "Predecessor for all nodes when the source node is " << source << std::endl;
-
-    for (auto p : m_predecessor)
-    {
-        std::cout << " " << p;
-    }
-
-    std::cout << std::endl;
+    return m_bfsAdjacencyList.size();
 }
 
 void GraphFixedSize::printGraph()
 {
     std::cout << "\n################### Graph nodes represented as adjacency list ##################\n";
-    for (int i = 0; i < m_adjacencyList.size(); i++)
+    for (int i = 0; i < m_bfsAdjacencyList.size(); i++)
     {
         std::cout << i;
-        for (auto n : m_adjacencyList[i])
+        for (auto n : m_bfsAdjacencyList[i])
         {
             std::cout << "->" << n; 
         }
@@ -116,44 +86,56 @@ void GraphFixedSize::printGraph()
     std::cout << "\n################################################################################\n";
 }
 
-void GraphFixedSize::resetColorPrdecessorDistance()
+void GraphFixedSize::resetBfsColorPrdecessorDistance()
 {
-    for (int i = 0; i < m_color.size(); i++)
+    for (int i = 0; i < m_bfsColor.size(); i++)
     {
-        m_color[i] = 'w';
-        m_distance[i] = std::numeric_limits<uint32_t>::max(); 
-        m_predecessor[i] = std::numeric_limits<uint32_t>::max(); 
+        m_bfsColor[i] = 'w';
+        m_bfsDistance[i] = std::numeric_limits<uint32_t>::max(); 
+        m_bfsPredecessor[i] = std::numeric_limits<uint32_t>::max(); 
     }
 }
 
+/*
+ Analysis for graph G(V, E), V is number of nodes and E is number of edges.
+ The operations of enqueuing and dequeuing take O(1) time, and so the total
+ time devoted to queue operations is O(V). Because the procedure scans the
+ adjacency list of each vertex only when the vertex is dequeued, it scans
+ each adjacency list at most once. Since the sum of the lengths of all the
+ adjacency lists is O(E), the total time spent in scanning adjacency lists
+ is O(E). The overhead for initialization is O(V), and thus the total
+ running time of the BFS procedure is O(V + E).
+*/
 void GraphFixedSize::runBFS(const uint32_t source)
 {
-    if (!m_graphTraversalIsStale && m_sourceNodeForBFS == source) return;
+    if (!m_bfsGraphTraversalIsStale && m_bfsSourceNode == source) return;
 
-    resetColorPrdecessorDistance();
+    resetBfsColorPrdecessorDistance();
 
-    m_color[source] = 'g';
-    m_predecessor[source] = std::numeric_limits<uint32_t>::max();
-    m_distance[source] = 0;
+    m_bfsColor[source] = 'g';
+    m_bfsPredecessor[source] = std::numeric_limits<uint32_t>::max();
+    m_bfsDistance[source] = 0;
     std::list<uint32_t> nodesToBeProcessed(1, source);
 
     while (!nodesToBeProcessed.empty())
     {
         auto node = nodesToBeProcessed.front();
         nodesToBeProcessed.pop_front();
-        for (auto neighbor : m_adjacencyList[node])
+        for (auto neighbor : m_bfsAdjacencyList[node])
         {
-            if (m_color[neighbor] == 'w')
+            if (m_bfsColor[neighbor] == 'w')
             {
-                m_color[neighbor] = 'g';
-                m_predecessor[neighbor] = node;
-                m_distance[neighbor] = m_distance[node] + 1;
+                m_bfsColor[neighbor] = 'g';
+                m_bfsPredecessor[neighbor] = node;
+                m_bfsDistance[neighbor] = m_bfsDistance[node] + 1;
                 nodesToBeProcessed.push_back(neighbor);
             }
         }
-        m_color[node] = 'b';
+        m_bfsColor[node] = 'b';
     }
 
-    m_sourceNodeForBFS = source;
-    m_graphTraversalIsStale = false;
+    m_bfsSourceNode = source;
+    m_bfsGraphTraversalIsStale = false;
 }
+
+
