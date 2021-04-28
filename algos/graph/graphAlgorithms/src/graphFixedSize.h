@@ -13,12 +13,16 @@ class GraphFixedSize
 public:
     GraphFixedSize(size_t s)
         :
-        m_bfsAdjacencyList(s),
+        m_adjacencyList(s),
         m_bfsColor(s, 'w'),
         m_bfsDistance(s, std::numeric_limits<uint32_t>::max()),
         m_bfsPredecessor(s, std::numeric_limits<uint32_t>::max()),
         m_bfsGraphTraversalIsStale(true),
-        m_bfsSourceNode(std::numeric_limits<uint32_t>::max())
+        m_bfsSourceNode(std::numeric_limits<uint32_t>::max()),
+        m_dfsColor(s, 'w'),
+        m_dfsPredecessor(s, std::numeric_limits<uint32_t>::max()),
+        m_dfsTime(0),
+        m_dfsGraphTraversalIsStale(true)
     {}
 
     void setNeighborsOfANode(const uint32_t node, const std::vector<uint32_t>& neighbors);
@@ -26,58 +30,80 @@ public:
     uint32_t shortestPathBFS(const uint32_t source, const uint32_t dest);
     uint32_t predecessorBFS(const uint32_t source, const uint32_t node);
 
-    uint32_t shortestPathDFS(const uint32_t source, const uint32_t dest);
-    uint32_t predecessorDFS(const uint32_t source, const uint32_t node);
+    uint32_t predecessorDFS(const uint32_t node);
 
     uint32_t size() const;
     void printGraph();
 
 private:
-    void runBFS(const uint32_t source);
-    void resetBfsColorPrdecessorDistance();
-    void runDFS(const int source);
+    std::vector<std::vector<uint32_t>> m_adjacencyList;
 
-    std::vector<std::vector<uint32_t>> m_bfsAdjacencyList;
+    void BFS(const uint32_t source);
+    void resetBfsColorPredecessorDistance();
+
     std::vector<char> m_bfsColor;
     std::vector<uint32_t> m_bfsDistance;
     std::vector<uint32_t> m_bfsPredecessor;
     bool m_bfsGraphTraversalIsStale;
     uint32_t m_bfsSourceNode;
+
+    void DFS();
+    void DFSVisit(const uint32_t s);
+    void resetDfsColorPredecessorTime();
+    std::vector<char> m_dfsColor;
+    std::vector<uint32_t> m_dfsPredecessor;
+    uint32_t m_dfsTime;
+    bool m_dfsGraphTraversalIsStale;
+    /*
+        While running DFS algorithm each node will have a start and
+        end time. m_dfsNodeDiscoveryAndFinishTime[n].first will represent the node
+        discovery time and m_dfsNodeDiscoveryAndFinishTime[n].second will represent
+        the finish time.
+    */
+    std::vector<std::pair<uint32_t, uint32_t>> m_dfsNodeDiscoveryAndFinishTime;
+
 };
 
 void GraphFixedSize::setNeighborsOfANode(const uint32_t node, const std::vector<uint32_t>& neighbors)
 {
-    if( m_bfsAdjacencyList[node] != neighbors)
+    if( m_adjacencyList[node] != neighbors)
     {
-        m_bfsAdjacencyList[node] = neighbors;
+        m_adjacencyList[node] = neighbors;
         m_bfsGraphTraversalIsStale = true;
+        m_dfsGraphTraversalIsStale = true;
     }
 }
 
 uint32_t GraphFixedSize::shortestPathBFS(const uint32_t source, const uint32_t dest)
 {
-    runBFS(source);
+    BFS(source);
     return m_bfsDistance[dest];
 }
 
 uint32_t GraphFixedSize::predecessorBFS(const uint32_t source, const uint32_t node)
 {
-    runBFS(source);
+    BFS(source);
     return m_bfsPredecessor[node];
+}
+
+uint32_t GraphFixedSize::predecessorDFS(const uint32_t node)
+{
+    DFS();
+    return m_dfsPredecessor[node];
 }
 
 uint32_t GraphFixedSize::size() const
 {
-    return m_bfsAdjacencyList.size();
+    return m_adjacencyList.size();
 }
 
 void GraphFixedSize::printGraph()
 {
     std::cout << "\n################### Graph nodes represented as adjacency list ##################\n";
-    for (int i = 0; i < m_bfsAdjacencyList.size(); i++)
+    for (int i = 0; i < m_adjacencyList.size(); i++)
     {
         std::cout << i;
-        for (auto n : m_bfsAdjacencyList[i])
+        for (auto n : m_adjacencyList[i])
         {
             std::cout << "->" << n; 
         }
@@ -86,7 +112,7 @@ void GraphFixedSize::printGraph()
     std::cout << "\n################################################################################\n";
 }
 
-void GraphFixedSize::resetBfsColorPrdecessorDistance()
+void GraphFixedSize::resetBfsColorPredecessorDistance()
 {
     for (int i = 0; i < m_bfsColor.size(); i++)
     {
@@ -106,11 +132,11 @@ void GraphFixedSize::resetBfsColorPrdecessorDistance()
  is O(E). The overhead for initialization is O(V), and thus the total
  running time of the BFS procedure is O(V + E).
 */
-void GraphFixedSize::runBFS(const uint32_t source)
+void GraphFixedSize::BFS(const uint32_t source)
 {
     if (!m_bfsGraphTraversalIsStale && m_bfsSourceNode == source) return;
 
-    resetBfsColorPrdecessorDistance();
+    resetBfsColorPredecessorDistance();
 
     m_bfsColor[source] = 'g';
     m_bfsPredecessor[source] = std::numeric_limits<uint32_t>::max();
@@ -121,7 +147,7 @@ void GraphFixedSize::runBFS(const uint32_t source)
     {
         auto node = nodesToBeProcessed.front();
         nodesToBeProcessed.pop_front();
-        for (auto neighbor : m_bfsAdjacencyList[node])
+        for (auto neighbor : m_adjacencyList[node])
         {
             if (m_bfsColor[neighbor] == 'w')
             {
@@ -138,4 +164,50 @@ void GraphFixedSize::runBFS(const uint32_t source)
     m_bfsGraphTraversalIsStale = false;
 }
 
+void GraphFixedSize::resetDfsColorPredecessorTime()
+{
+    for (uint32_t i = 0; i < m_dfsColor.size(); i++)
+    {
+        m_dfsColor[i] = 'w';
+        m_dfsPredecessor[i] = std::numeric_limits<uint32_t>::max();
+    }
 
+    m_dfsTime = 0;
+}
+
+void GraphFixedSize::DFS()
+{
+    if (!m_dfsGraphTraversalIsStale) return;
+
+    resetDfsColorPredecessorTime();
+
+    for (uint32_t i = 0; i < m_adjacencyList.size(); i++)
+    {
+        if (m_dfsColor[i] == 'w')
+        {
+            DFSVisit(i);
+        }
+    }
+
+    m_dfsGraphTraversalIsStale = false;
+}
+
+void GraphFixedSize::DFSVisit(const uint32_t s)
+{
+    m_dfsTime += 1;
+    m_dfsNodeDiscoveryAndFinishTime[s].first = m_dfsTime;
+    m_dfsColor[s] = 'g';
+
+    for (auto neighbor : m_adjacencyList[s])
+    {
+        if (m_dfsColor[neighbor] == 'w')
+        {
+            m_dfsPredecessor[neighbor] = s; 
+            DFSVisit(neighbor);
+        }
+    }
+
+    m_dfsColor[s] = 'b';
+    m_dfsTime += 1;
+    m_dfsNodeDiscoveryAndFinishTime[s].second = m_dfsTime;
+}
