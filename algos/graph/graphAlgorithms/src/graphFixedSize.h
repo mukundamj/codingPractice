@@ -183,6 +183,14 @@ void GraphFixedSize::resetDfsColorPredecessorTime()
     m_dfsTime = 0;
 }
 
+/*
+ Analysis for graph G(V, E), V is number of nodes and E is number of edges.
+ The call for resetting takes O(V) time. The for loop also takes O(V) time
+ plus the time needed for DFSVisit(). Inside DFSVisit the neighboring nodes
+ are visited only once hence the run time is O(E). So the total running time
+ of the DFS procedure is O(V + E).
+*/
+
 void GraphFixedSize::DFS()
 {
     if (!m_dfsGraphTraversalIsStale) return;
