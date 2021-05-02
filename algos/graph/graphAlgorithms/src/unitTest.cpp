@@ -259,59 +259,56 @@ TEST_F(GraphVariableSizeBFS, PredecessorNode)
 
 }   //namespace
 
-//TBD 28-Apr-21: Continue from here.
-//class GraphFixedSizeDFS : public testing::Test {
-//protected:
-//
-//    void SetUp() override {
-//        graphFixedSize.setNeighborsOfANode(0, {1, 4});
-//        graphFixedSize.setNeighborsOfANode(1, {0, 5});
-//        graphFixedSize.setNeighborsOfANode(2, {3, 5, 6});
-//        graphFixedSize.setNeighborsOfANode(3, {2, 6, 7});
-//        graphFixedSize.setNeighborsOfANode(4, {0});
-//        graphFixedSize.setNeighborsOfANode(5, {1, 2, 6});
-//        graphFixedSize.setNeighborsOfANode(6, {2, 3, 5, 7});
-//        graphFixedSize.setNeighborsOfANode(7, {3, 6});
-//    }
-//
-//    void printGraph()
-//    {
-//        graphFixedSize.printGraph();
-//    }
-//
-//    GraphFixedSize<uint32_t> graphFixedSize;
-//};
-//
-//TEST_F(GraphFixedSizeDFS, printGraph)
-//{
-//    // This is a dummmy test just used for printing the graph
-//    printGraph();
-//}
-//
-//TEST_F(GraphFixedSizeDFS, PredecessorNode)
-//{
-//    std::vector<uint32_t> expectedPredecessorWithSrcNode1 = {1, 0, 5, 2, 0, 1, 5, 6};
-//    std::vector<uint32_t> expectedPredecessorWithSrcNode3 = {1, 5, 3, 0, 0, 6, 3, 3};
-//    std::vector<uint32_t> expectedPredecessorWithSrcNode5 = {1, 5, 5, 2, 0, 0, 5, 6};
-//
-//    uint32_t sourceNode = 1;
-//    for (int i = 0; i < graphFixedSize.size(); i++)
-//    {
-//        EXPECT_EQ(expectedPredecessorWithSrcNode1[i], graphFixedSize.predecessorDFS(sourceNode, i));
-//    }
-//
-//    sourceNode = 3;
-//    for (int i = 0; i < graphFixedSize.size(); i++)
-//    {
-//        EXPECT_EQ(expectedPredecessorWithSrcNode3[i], graphFixedSize.predecessorDFS(sourceNode, i));
-//    }
-//
-//    sourceNode = 5;
-//    for (int i = 0; i < graphFixedSize.size(); i++)
-//    {
-//        EXPECT_EQ(expectedPredecessorWithSrcNode5[i], graphFixedSize.predecessorDFS(sourceNode, i));
-//    }
-//}
+class GraphFixedSizeDFS : public testing::Test {
+protected:
+
+    void SetUp() override {
+        graphFixedSize.setNeighborsOfANode(0, {1, 3});
+        graphFixedSize.setNeighborsOfANode(1, {4});
+        graphFixedSize.setNeighborsOfANode(2, {4, 5});
+        graphFixedSize.setNeighborsOfANode(3, {1});
+        graphFixedSize.setNeighborsOfANode(4, {3});
+        graphFixedSize.setNeighborsOfANode(5, {5});
+    }
+
+    void printGraph()
+    {
+        graphFixedSize.printGraph();
+    }
+
+    GraphFixedSize graphFixedSize{6};
+};
+
+TEST_F(GraphFixedSizeDFS, printGraph)
+{
+    // This is a dummmy test just used for printing the graph
+    printGraph();
+}
+
+TEST_F(GraphFixedSizeDFS, PredecessorNode)
+{
+    uint32_t uint32Max = std::numeric_limits<uint32_t>::max();
+    std::vector<uint32_t> expectedPredecessor = {uint32Max, 0, uint32Max, 4, 1, 2};
+
+    for (int i = 0; i < graphFixedSize.size(); i++)
+    {
+        EXPECT_EQ(expectedPredecessor[i], graphFixedSize.predecessorDFS(i));
+    }
+}
+
+TEST_F(GraphFixedSizeDFS, DiscoveryAndFinishTime)
+{
+    std::vector<std::pair<uint32_t, uint32_t>> expectedNodeDiscoveryAndFinishTime =
+        {
+            std::make_pair(1, 8), std::make_pair(2, 7), std::make_pair(9, 12),
+            std::make_pair(4, 5), std::make_pair(3, 6), std::make_pair(10, 11)
+        };
+
+    for (int i = 0; i < graphFixedSize.size(); i++)
+    {
+        EXPECT_EQ(expectedNodeDiscoveryAndFinishTime[i], graphFixedSize.nodeDiscoveryAndFinishTimeDFS(i));
+    }
+}
 
 //If libgtest_main.a is not linked, RUN_ALL_TESTS()
 //must be invoked from the below main()

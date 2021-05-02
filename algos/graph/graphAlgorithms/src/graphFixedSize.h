@@ -22,7 +22,8 @@ public:
         m_dfsColor(s, 'w'),
         m_dfsPredecessor(s, std::numeric_limits<uint32_t>::max()),
         m_dfsTime(0),
-        m_dfsGraphTraversalIsStale(true)
+        m_dfsGraphTraversalIsStale(true),
+        m_dfsNodeDiscoveryAndFinishTime(s, std::make_pair(std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max()))
     {}
 
     void setNeighborsOfANode(const uint32_t node, const std::vector<uint32_t>& neighbors);
@@ -31,6 +32,7 @@ public:
     uint32_t predecessorBFS(const uint32_t source, const uint32_t node);
 
     uint32_t predecessorDFS(const uint32_t node);
+    std::pair<uint32_t, uint32_t> nodeDiscoveryAndFinishTimeDFS(const uint32_t node);
 
     uint32_t size() const;
     void printGraph();
@@ -84,12 +86,6 @@ uint32_t GraphFixedSize::predecessorBFS(const uint32_t source, const uint32_t no
 {
     BFS(source);
     return m_bfsPredecessor[node];
-}
-
-uint32_t GraphFixedSize::predecessorDFS(const uint32_t node)
-{
-    DFS();
-    return m_dfsPredecessor[node];
 }
 
 uint32_t GraphFixedSize::size() const
@@ -162,6 +158,18 @@ void GraphFixedSize::BFS(const uint32_t source)
 
     m_bfsSourceNode = source;
     m_bfsGraphTraversalIsStale = false;
+}
+
+uint32_t GraphFixedSize::predecessorDFS(const uint32_t node)
+{
+    DFS();
+    return m_dfsPredecessor[node];
+}
+
+std::pair<uint32_t, uint32_t> GraphFixedSize::nodeDiscoveryAndFinishTimeDFS(const uint32_t node)
+{
+    DFS();
+    return m_dfsNodeDiscoveryAndFinishTime[node];
 }
 
 void GraphFixedSize::resetDfsColorPredecessorTime()
