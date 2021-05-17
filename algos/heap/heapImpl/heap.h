@@ -1,23 +1,24 @@
 #define pragma 
 #include <iostream>
 
-namespace heapUtils {
+namespace HeapUtils {
     void make_heap(...)
+    void heap_sort(...)
 }
 
 template<typename T, typename Sequence = std::vector<T>, typename Compare = std::less<T>>
-class heap {
+class Heap {
 public:
     using size_type = Sequence::size_type;
     using value_type = Sequence::value_type;
     using const_reference = Sequence::const_reference;
 
-    explicit heap(const Compare& compare, const Sequence& sequence);
-    explicit heap(const Compare& compare, Sequence&& sequence);
+    explicit Heap(const Compare& compare, const Sequence& sequence);
+    explicit Heap(const Compare& compare, Sequence&& sequence);
     template<typename InputIterator>
-    heap(InputIterator begin, InputIterator end, const Compare& compare, const Sequence& sequence); 
+    Heap(InputIterator first, InputIterator last, const Compare& compare, const Sequence& sequence); 
     template<typename InputIterator>
-    heap(InputIterator begin, InputIterator end, const Compare& compare, Sequence&& sequence); 
+    Heap(InputIterator first, InputIterator last, const Compare& compare, Sequence&& sequence); 
 
     bool empty() const;
     size_type size() const;
