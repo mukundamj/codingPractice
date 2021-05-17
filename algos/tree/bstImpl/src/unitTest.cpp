@@ -4,6 +4,8 @@
 int main(int argc, const char* argv[])
 {
     TreeUtils::TreeNode<int>* root = TreeUtils::bstInsert<int>(nullptr, 10);
+    //Since int is the default template parameter root can also be defined as below
+    //TreeUtils::TreeNode<>* root = TreeUtils::bstInsert<int>(nullptr, 10);
     TreeUtils::bstInsert(root, 5);
     TreeUtils::bstInsert(root, 12);
     TreeUtils::bstInsert(root, 2);
