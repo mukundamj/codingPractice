@@ -36,6 +36,7 @@ int main(int argc, const char* argv[])
     std::cout << "The minimum value in the tree is: " << (TreeUtils::bstMinimum(root))->val << std::endl;
     std::cout << "The maximum value in the tree is: " << (TreeUtils::bstMaximum(root))->val << std::endl;
 
+    TreeUtils::destroyRecursively(root);
     return 0;
 }
 

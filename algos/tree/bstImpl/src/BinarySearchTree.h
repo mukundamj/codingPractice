@@ -11,10 +11,24 @@ template<typename T = int>
 struct TreeNode
 {
     T val;
-    TreeNode* left;
-    TreeNode* right;
+    TreeNode<T>* left;
+    TreeNode<T>* right;
     TreeNode(T x) : val(x), left(NULL), right(NULL) {}
 };
+
+//For destroying a tree structure postOrderTraversal is used because the child
+//nodes must be destroyed before destroying the parent node
+template <typename T = int>
+void destroyRecursively(TreeNode<T>* root)
+{
+    if (root)
+    {
+        destroyRecursively(root->left);
+        destroyRecursively(root->right);
+        std::cout << "Destroying node with value " << root->val << std::endl;
+        delete root;
+    }
+}
 
 /*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
 template <typename T = int>
