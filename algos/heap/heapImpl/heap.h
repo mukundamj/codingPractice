@@ -28,6 +28,10 @@ public:
     void emplace(Args&&... args);
     void pop();
     void swap(heap& rhs);
+    //This operation will increase the value of the index to
+    //the new value. The assumption is that the value is greater
+    //than the current value of the index
+    void increaseKey(const int index, const int value);
 
 protected:
     Sequence m_sequence;

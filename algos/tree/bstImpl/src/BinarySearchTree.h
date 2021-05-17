@@ -4,6 +4,9 @@
 //Source of above info: https://www.cprogramming.com/reference/preprocessor/pragma.html
 #pragma once
 
+namespace TreeUtils
+{
+
 template<typename T = int>
 struct TreeNode
 {
@@ -13,210 +16,107 @@ struct TreeNode
     TreeNode(T x) : val(x), left(NULL), right(NULL) {}
 };
 
-template<typename T = int>
-class Tree
+/*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
+template <typename T = int>
+void preOrderTraversal(const TreeNode<T>* root)
 {
-public:
-    Tree() : m_root(NULL) {}
+    if(!root) return;
 
-    /*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
-    void PreOrderTraversal() const
-    {
-        PreOrderTraversal(m_root);
-    }
+    std::cout << root->val << std::endl;
 
-    /*If the tree is a binary search tree then inorder tree traversal allows us to print
-    the keys in a sorted order.
-    Time complexity T(n) = O(n), where n is number of nodes in the tree*/
-    void InOrderTraversal() const
-    {
-        InOrderTraversal(m_root);
-    }
+    preOrderTraversal(root->left);
+ 
+    preOrderTraversal(root->right);
+}
 
-    /*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
-    void PostOrderTraversal() const
-    {
-        PostOrderTraversal(m_root);
-    }
+/*If the tree is a binary search tree then inorder tree traversal allows us to print
+the keys in a sorted order.
+Time complexity T(n) = O(n), where n is number of nodes in the tree*/
+template <typename T = int>
+void inOrderTraversal(const TreeNode<T>* root)
+{
+    if(!root) return;
 
-    /*TBD*/
-    //void Clone(const TreeNode<T>* root) const;
+    inOrderTraversal(root->left);
 
-protected:
-    TreeNode<T>* m_root;
+    std::cout << root->val << std::endl;
 
-private:
-    void PreOrderTraversal(const TreeNode<T>* root) const;
-    void InOrderTraversal(const TreeNode<T>* root) const;
-    void PostOrderTraversal(const TreeNode<T>* root) const;
-};
+    inOrderTraversal(root->right);
+}
+
+/*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
+template <typename T = int>
+void postOrderTraversal(const TreeNode<T>* root)
+{
+    if(!root) return;
+
+    postOrderTraversal(root->left);
+
+    postOrderTraversal(root->right);
+
+    std::cout << root->val << std::endl;
+}
+
+/*TBD*/
+//void Clone(const TreeNode<T>* root) const;
 
 /*The keys in a binary search tree are always stored in such a way as to satisfy the
 binary-search-tree property: left-node-key ≤ parent-node-key ≤ right-node-key 
 */
-template<typename T = int>
-class BinarySearchTree : public Tree<T>
-{
-public:
-    /*
-      The following implementation uses recursive approach.
-      Time complexity for a tree having n nodes is O(n).
-      Iterative approach is TBD 
-    */
-    void Insert(const T& val);
-
-    /*
-       TBD: Deleting a node is a tricky opration; it will
-       be dealt with later.
-    */ 
-    void Delete(const T& val);
-
-    /* Time complexity T(n) = O(h)*/
-    const TreeNode<T>* SearchRecursive(const T& val) const;
-
-    /* Time complexity T(n) = O(h)*/
-    const TreeNode<T>* SearchIterative(const T& val) const;
-
-    /* Time complexity T(n) = O(h)*/
-    const TreeNode<T>* Minimum() const;
-
-    /* Time complexity T(n) = O(h)*/
-    const TreeNode<T>* Maximum() const;
-
-    const TreeNode<T>* Successor(const TreeNode<T>* x) const;
-    /*
-        Refer to the page number 292 in the book, "Introduction To Algorithms"
-        3rd edition, for solution. Here is the pseudocode:
-
-        TREE-SUCCESSOR (x)
-        //If the node has a right child then the minimum in the right sub-tree will be the successor 
-        1 if x.right != NIL
-        2     return TREE-MINIMUM(x.right)
-        //If the node doesn't have a right child then find the nearest ancestor node
-        //that has this node in the left sub-tree 
-        3 y = x.p
-        4 while y != NIL and x == y.right
-        5    x = y
-        6    y = x.p
-        7 return y
-
-        In the below example if x is :
-            - 10 then 12 is the successor
-            - 5 or 7 or 8 then 10 is the successor, because it is nearest ancestor node that has
-              8 in its left sub-tree
-            - 2 then 5 is the successor
-        
-                  10
-                 /  \
-                5    12
-               / \
-              2   7
-                 / \
-                6   8
- 
-        The running time of the above algorithm on a tree of height h is O(h). The above algorithm
-        assumes that the node x has a parent node.
-    */
-
-    const TreeNode<T>* Predecessor(const TreeNode<T>* x) const;
-    /*
-        The algorithm is similar to the one above
-
-        TREE-PREDECESSOR (x)
-        1 if x.left != NIL
-        2     return TREE-MAXIMUM(x.left)
-        3 y = x.p
-        4 while y != NIL and x == y.left
-        5    x = y
-        6    y = x.p
-        7 return y
-    */
-
-private:
-    const TreeNode<T>* SearchRecursive(const TreeNode<T>* root, const T& val) const;
-    TreeNode<T>* Insert(TreeNode<T>* root, const T& val);
-};
 
 /*
-    While using templates, declaration and definition should be in one header file.
-    Compiler won't generate a machine code for a particular template instantiation
-    if it's not used in the client code. In the client code only BinarySearchTree.h
-    will be included, hence it should contain both declaration and definition. 
+  The following implementation uses recursive approach.
+  Time complexity for a tree having n nodes is O(n).
+  Iterative approach is TBD 
 */
-template <typename T>
-void Tree<T>::PreOrderTraversal(const TreeNode<T>* root) const
+template<typename T = int>
+TreeNode<T>* bstInsert(TreeNode<T>* root, const T& val)
 {
-    if(!root) return;
-
-    std::cout << root->val << std::endl;
-
-    if(root->left)
+    if (!root)
     {
-        PreOrderTraversal(root->left);
+        return new TreeNode<T>(val);
     }
- 
-    if(root->right)
+
+    if (val <= root->val)
     {
-        PreOrderTraversal(root->right);
+        root->left = bstInsert(root->left, val);
     }
+
+    else
+    {
+        root->right = bstInsert(root->right, val);
+    }
+
+    return root;
 }
 
-template <typename T>
-void Tree<T>::InOrderTraversal(const TreeNode<T>* root) const
-{
-    if(!root) return;
+/*
+   TBD: Deleting a node is a tricky opration; it will
+   be dealt with later.
+*/ 
+//void bstDelete(const T& val);
 
-    if(root->left)
-    {
-        InOrderTraversal(root->left);
-    }
-
-    std::cout << root->val << std::endl;
-
-    if(root->right)
-    {
-        InOrderTraversal(root->right);
-    }
-}
-
-template <typename T>
-void Tree<T>::PostOrderTraversal(const TreeNode<T>* root) const
-{
-    if(!root) return;
-
-    if(root->left)
-    {
-        PostOrderTraversal(root->left);
-    }
-
-    if(root->right)
-    {
-        PostOrderTraversal(root->right);
-    }
-
-    std::cout << root->val << std::endl;
-}
-
-template <typename T>
-const TreeNode<T>* BinarySearchTree<T>::SearchRecursive(const T& val) const
-{
-    return SearchRecursive(Tree<T>::m_root, val);
-}
-
-template <typename T>
-const TreeNode<T>* BinarySearchTree<T>::SearchRecursive(const TreeNode<T>* root, const T& val) const
+/* Time complexity T(n) = O(h)*/
+template <typename T = int>
+const TreeNode<T>* bstSearchRecursive(const TreeNode<T>* root, const T& val)
 {
     if(!root || root->val == val) return root;
 
-    if(val < root->val) return SearchRecursive(root->left, val);
+    if(val < root->val)
+    {
+        return bstSearchRecursive(root->left, val);
+    }
 
-    else return SearchRecursive(root->right, val);
+    else
+    {
+        return bstSearchRecursive(root->right, val);
+    }
 }
 
-template <typename T>
-const TreeNode<T>* BinarySearchTree<T>::SearchIterative(const T& val) const
+/* Time complexity T(n) = O(h)*/
+template <typename T = int>
+const TreeNode<T>* bstSearchIterative(const TreeNode<T>* root, const T& val)
 {
-    TreeNode<T>* root = Tree<T>::m_root;
     while(root && val != root->val)
     {
         if(val < root->val) root = root->left;
@@ -226,11 +126,10 @@ const TreeNode<T>* BinarySearchTree<T>::SearchIterative(const T& val) const
     return root;
 }
 
-template <typename T>
-const TreeNode<T>* BinarySearchTree<T>::Minimum() const
+/*Time complexity T(n) = O(h)*/
+template <typename T = int>
+const TreeNode<T>* bstMinimum(const TreeNode<T>* root)
 {
-    TreeNode<T>* root = Tree<T>::m_root;
-
     while(root && root->left)
     {
         root = root->left;
@@ -239,11 +138,10 @@ const TreeNode<T>* BinarySearchTree<T>::Minimum() const
     return root;
 }
 
-template <typename T>
-const TreeNode<T>* BinarySearchTree<T>::Maximum() const
+/* Time complexity T(n) = O(h)*/
+template <typename T = int>
+const TreeNode<T>* bstMaximum(const TreeNode<T>* root)
 {
-    TreeNode<T>* root = Tree<T>::m_root;
-
     while(root && root->right)
     {
         root = root->right;
@@ -252,29 +150,54 @@ const TreeNode<T>* BinarySearchTree<T>::Maximum() const
     return root;
 }
 
-template <typename T>
-void BinarySearchTree<T>::Insert(const T& val)
-{
-    Tree<T>::m_root = Insert(Tree<T>::m_root, val);
-}
+template <typename T = int>
+TreeNode<T>* bstSuccessor(const TreeNode<T>* x);
+/*
+    Refer to the page number 292 in the book, "Introduction To Algorithms"
+    3rd edition, for solution. Here is the pseudocode:
 
-template <typename T>
-TreeNode<T>* BinarySearchTree<T>::Insert(TreeNode<T>* root, const T& val)
-{
-    if (!root)
-    {
-        return new TreeNode<T>(val);
-    }
+    TREE-SUCCESSOR (x)
+    //If the node has a right child then the minimum in the right sub-tree will be the successor 
+    1 if x.right != NIL
+    2     return TREE-MINIMUM(x.right)
+    //If the node doesn't have a right child then find the nearest ancestor node
+    //that has this node in the left sub-tree 
+    3 y = x.p
+    4 while y != NIL and x == y.right
+    5    x = y
+    6    y = x.p
+    7 return y
 
-    if (val <= root->val)
-    {
-        root->left = Insert(root->left, val);
-    }
+    In the below example if x is :
+        - 10 then 12 is the successor
+        - 5 or 7 or 8 then 10 is the successor, because it is nearest ancestor node that has
+          8 in its left sub-tree
+        - 2 then 5 is the successor
+    
+              10
+             /  \
+            5    12
+           / \
+          2   7
+             / \
+            6   8
 
-    else
-    {
-        root->right = Insert(root->right, val);
-    }
+    The running time of the above algorithm on a tree of height h is O(h). The above algorithm
+    assumes that the node x has a parent node.
+*/
 
-    return root;
+template <typename T = int>
+TreeNode<T>* bstPredecessor(const TreeNode<T>* x);
+/*
+    The algorithm is similar to the one above
+
+    TREE-PREDECESSOR (x)
+    1 if x.left != NIL
+    2     return TREE-MAXIMUM(x.left)
+    3 y = x.p
+    4 while y != NIL and x == y.left
+    5    x = y
+    6    y = x.p
+    7 return y
+*/
 }

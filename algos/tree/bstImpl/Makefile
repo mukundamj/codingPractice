@@ -1,1 +1,1 @@
-/home/mjanardhana/gitRepo/codingPractice/Makefile
+../../../Makefile
