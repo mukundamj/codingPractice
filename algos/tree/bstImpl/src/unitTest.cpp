@@ -1,44 +1,81 @@
 #include <iostream>
 #include "BinarySearchTree.h"
+#include "gtest/gtest.h"
 
-int main(int argc, const char* argv[])
+class TreeTestFixture : public testing::Test {
+
+protected:
+
+    void SetUp() override
+    {
+        m_tree.bstInsert(10);
+        m_tree.bstInsert(5);
+        m_tree.bstInsert(12);
+        m_tree.bstInsert(2);
+        m_tree.bstInsert(14);
+        m_tree.bstInsert(7);
+        m_tree.bstInsert(6);
+        m_tree.bstInsert(8);
+    }
+
+    void printTree()
+    {
+        std::cout << "\nPre order traversal\n";
+        m_tree.preOrderTraversal();
+
+        std::cout << "\nIn order traversal\n";
+        m_tree.inOrderTraversal();
+
+        std::cout << "\nPost order traversal\n";
+        m_tree.postOrderTraversal();
+    }
+
+    Tree<int> m_tree;
+};
+
+TEST_F(TreeTestFixture, printGraph)
 {
-    TreeUtils::TreeNode<int>* root = TreeUtils::bstInsert<int>(nullptr, 10);
-    //Since int is the default template parameter root can also be defined as below
-    //TreeUtils::TreeNode<>* root = TreeUtils::bstInsert<int>(nullptr, 10);
-    TreeUtils::bstInsert(root, 5);
-    TreeUtils::bstInsert(root, 12);
-    TreeUtils::bstInsert(root, 2);
-    TreeUtils::bstInsert(root, 14);
-    TreeUtils::bstInsert(root, 7);
-    TreeUtils::bstInsert(root, 6);
-    TreeUtils::bstInsert(root, 8);
-
-    std::cout << "Preorer traversal" << std::endl;
-    TreeUtils::preOrderTraversal(root);
-
-    std::cout << "Inorder traversal" << std::endl;
-    TreeUtils::inOrderTraversal(root);
-
-    std::cout << "Postorder traversal" << std::endl;
-    TreeUtils::postOrderTraversal(root);
- 
-    std::cout << "Iterative serach: does the tree have value 8: " << std::string(TreeUtils::bstSearchIterative(root, 8) ? "yes" : "no") << std::endl;
-    std::cout << "Recursive serach: does the tree have value 8: " << std::string(TreeUtils::bstSearchRecursive(root, 8) ? "yes" : "no") << std::endl;
-
-    std::cout << "Iterative serach: does the tree have value 10: " << std::string(TreeUtils::bstSearchIterative(root, 10) ? "yes" : "no") << std::endl;
-    std::cout << "Recursive serach: does the tree have value 10: " << std::string(TreeUtils::bstSearchRecursive(root, 10) ? "yes" : "no") << std::endl;
-
-    std::cout << "Iterative serach: does the tree have value 14: " << std::string(TreeUtils::bstSearchIterative(root, 14) ? "yes" : "no") << std::endl;
-    std::cout << "Recursive serach: does the tree have value 14: " << std::string(TreeUtils::bstSearchRecursive(root, 14) ? "yes" : "no") << std::endl;
-
-    std::cout << "Iterative serach: does the tree have value 20: " << std::string(TreeUtils::bstSearchIterative(root, 20) ? "yes" : "no") << std::endl;
-    std::cout << "Recursive serach: does the tree have value 20: " << std::string(TreeUtils::bstSearchRecursive(root, 20) ? "yes" : "no") << std::endl;
-
-    std::cout << "The minimum value in the tree is: " << (TreeUtils::bstMinimum(root))->val << std::endl;
-    std::cout << "The maximum value in the tree is: " << (TreeUtils::bstMaximum(root))->val << std::endl;
-
-    TreeUtils::destroyRecursively(root);
-    return 0;
+    printTree();
 }
 
+TEST_F(TreeTestFixture, bstSearchIterative)
+{
+    EXPECT_EQ(10, (m_tree.bstSearchIterative(10))->val);
+    EXPECT_EQ(5, (m_tree.bstSearchIterative(5))->val);
+    EXPECT_EQ(12, (m_tree.bstSearchIterative(12))->val);
+    EXPECT_EQ(2, (m_tree.bstSearchIterative(2))->val);
+    EXPECT_EQ(14, (m_tree.bstSearchIterative(14))->val);
+    EXPECT_EQ(7, (m_tree.bstSearchIterative(7))->val);
+    EXPECT_EQ(6, (m_tree.bstSearchIterative(6))->val);
+    EXPECT_EQ(8, (m_tree.bstSearchIterative(8))->val);
+    EXPECT_EQ(nullptr, m_tree.bstSearchIterative(20));
+
+    m_tree.bstInsert(20);
+    EXPECT_EQ(20, (m_tree.bstSearchIterative(20))->val);
+}
+
+TEST_F(TreeTestFixture, bstSearchRecursive)
+{
+    EXPECT_EQ(10, (m_tree.bstSearchRecursive(10))->val);
+    EXPECT_EQ(5, (m_tree.bstSearchRecursive(5))->val);
+    EXPECT_EQ(12, (m_tree.bstSearchRecursive(12))->val);
+    EXPECT_EQ(2, (m_tree.bstSearchRecursive(2))->val);
+    EXPECT_EQ(14, (m_tree.bstSearchRecursive(14))->val);
+    EXPECT_EQ(7, (m_tree.bstSearchRecursive(7))->val);
+    EXPECT_EQ(6, (m_tree.bstSearchRecursive(6))->val);
+    EXPECT_EQ(8, (m_tree.bstSearchRecursive(8))->val);
+    EXPECT_EQ(nullptr, m_tree.bstSearchRecursive(20));
+
+    m_tree.bstInsert(20);
+    EXPECT_EQ(20, (m_tree.bstSearchRecursive(20))->val);
+}
+
+TEST_F(TreeTestFixture, bstMinimum)
+{
+    EXPECT_EQ(2, (m_tree.bstMinimum())->val);
+}
+
+TEST_F(TreeTestFixture, bstMaximum)
+{
+    EXPECT_EQ(14, (m_tree.bstMaximum())->val);
+}

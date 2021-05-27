@@ -8,35 +8,35 @@ namespace TreeUtils
 {
 
 template<typename T = int>
-struct TreeNode
+struct Node
 {
     T val;
-    TreeNode<T>* left;
-    TreeNode<T>* right;
-    TreeNode(T x) : val(x), left(NULL), right(NULL) {}
+    Node<T>* left;
+    Node<T>* right;
+    Node(T x) : val(x), left(NULL), right(NULL) {}
 };
 
 //For destroying a tree structure postOrderTraversal is used because the child
 //nodes must be destroyed before destroying the parent node
 template <typename T = int>
-void destroyRecursively(TreeNode<T>* root)
+void destroyRecursively(Node<T>* root)
 {
     if (root)
     {
         destroyRecursively(root->left);
         destroyRecursively(root->right);
-        std::cout << "Destroying node with value " << root->val << std::endl;
+        std::cout << root->val << " ";
         delete root;
     }
 }
 
 /*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
 template <typename T = int>
-void preOrderTraversal(const TreeNode<T>* root)
+void preOrderTraversal(const Node<T>* root)
 {
     if(!root) return;
 
-    std::cout << root->val << std::endl;
+    std::cout << root->val << " ";
 
     preOrderTraversal(root->left);
  
@@ -47,20 +47,20 @@ void preOrderTraversal(const TreeNode<T>* root)
 the keys in a sorted order.
 Time complexity T(n) = O(n), where n is number of nodes in the tree*/
 template <typename T = int>
-void inOrderTraversal(const TreeNode<T>* root)
+void inOrderTraversal(const Node<T>* root)
 {
     if(!root) return;
 
     inOrderTraversal(root->left);
 
-    std::cout << root->val << std::endl;
+    std::cout << root->val << " ";
 
     inOrderTraversal(root->right);
 }
 
 /*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
 template <typename T = int>
-void postOrderTraversal(const TreeNode<T>* root)
+void postOrderTraversal(const Node<T>* root)
 {
     if(!root) return;
 
@@ -68,11 +68,11 @@ void postOrderTraversal(const TreeNode<T>* root)
 
     postOrderTraversal(root->right);
 
-    std::cout << root->val << std::endl;
+    std::cout << root->val << " ";
 }
 
 /*TBD*/
-//void Clone(const TreeNode<T>* root) const;
+//void Clone(const Node<T>* root) const;
 
 /*The keys in a binary search tree are always stored in such a way as to satisfy the
 binary-search-tree property: left-node-key ≤ parent-node-key ≤ right-node-key 
@@ -84,11 +84,11 @@ binary-search-tree property: left-node-key ≤ parent-node-key ≤ right-node-ke
   Iterative approach is TBD 
 */
 template<typename T = int>
-TreeNode<T>* bstInsert(TreeNode<T>* root, const T& val)
+Node<T>* bstInsert(Node<T>* root, const T& val)
 {
     if (!root)
     {
-        return new TreeNode<T>(val);
+        return new Node<T>(val);
     }
 
     if (val <= root->val)
@@ -112,7 +112,7 @@ TreeNode<T>* bstInsert(TreeNode<T>* root, const T& val)
 
 /* Time complexity T(n) = O(h)*/
 template <typename T = int>
-const TreeNode<T>* bstSearchRecursive(const TreeNode<T>* root, const T& val)
+const Node<T>* bstSearchRecursive(const Node<T>* root, const T& val)
 {
     if(!root || root->val == val) return root;
 
@@ -129,7 +129,7 @@ const TreeNode<T>* bstSearchRecursive(const TreeNode<T>* root, const T& val)
 
 /* Time complexity T(n) = O(h)*/
 template <typename T = int>
-const TreeNode<T>* bstSearchIterative(const TreeNode<T>* root, const T& val)
+const Node<T>* bstSearchIterative(const Node<T>* root, const T& val)
 {
     while(root && val != root->val)
     {
@@ -142,7 +142,7 @@ const TreeNode<T>* bstSearchIterative(const TreeNode<T>* root, const T& val)
 
 /*Time complexity T(n) = O(h)*/
 template <typename T = int>
-const TreeNode<T>* bstMinimum(const TreeNode<T>* root)
+const Node<T>* bstMinimum(const Node<T>* root)
 {
     while(root && root->left)
     {
@@ -154,7 +154,7 @@ const TreeNode<T>* bstMinimum(const TreeNode<T>* root)
 
 /* Time complexity T(n) = O(h)*/
 template <typename T = int>
-const TreeNode<T>* bstMaximum(const TreeNode<T>* root)
+const Node<T>* bstMaximum(const Node<T>* root)
 {
     while(root && root->right)
     {
@@ -165,7 +165,7 @@ const TreeNode<T>* bstMaximum(const TreeNode<T>* root)
 }
 
 template <typename T = int>
-TreeNode<T>* bstSuccessor(const TreeNode<T>* x);
+Node<T>* bstSuccessor(const Node<T>* x);
 /*
     Refer to the page number 292 in the book, "Introduction To Algorithms"
     3rd edition, for solution. Here is the pseudocode:
@@ -201,7 +201,7 @@ TreeNode<T>* bstSuccessor(const TreeNode<T>* x);
 */
 
 template <typename T = int>
-TreeNode<T>* bstPredecessor(const TreeNode<T>* x);
+Node<T>* bstPredecessor(const Node<T>* x);
 /*
     The algorithm is similar to the one above
 
@@ -215,3 +215,70 @@ TreeNode<T>* bstPredecessor(const TreeNode<T>* x);
     7 return y
 */
 }
+
+/*
+If memory for TreeUtils::Node<T> is allocated in heap then the client has to take care
+of deleting it. To avoid the responsibility on the client the Tree class can be used.
+When the class Tree is destroyed the Node is deallocated in Tree's destructor.
+*/
+template<typename T>
+class Tree {
+public:
+
+    Tree() : m_root(nullptr)
+    {}
+
+    Tree(const T val): m_root(new TreeUtils::Node<T>(val))
+    {}
+
+    virtual ~Tree()
+    {
+        std::cout << "\nDestroying the nodes recursively\n";
+        TreeUtils::destroyRecursively(m_root);
+        std::cout << "\n";
+    }
+
+    void bstInsert(const T val)
+    {
+        m_root = TreeUtils::bstInsert(m_root, val);
+    }
+
+    void preOrderTraversal()
+    {
+        TreeUtils::preOrderTraversal(m_root); 
+    }
+
+    void inOrderTraversal()
+    {
+        TreeUtils::inOrderTraversal(m_root); 
+    }
+
+    void postOrderTraversal()
+    {
+        TreeUtils::postOrderTraversal(m_root); 
+    }
+
+    const TreeUtils::Node<T>* bstSearchIterative(const T val)
+    {
+        return TreeUtils::bstSearchIterative(m_root, val);
+    }
+
+    const TreeUtils::Node<T>* bstSearchRecursive(const T val)
+    {
+        return TreeUtils::bstSearchRecursive(m_root, val);
+    }
+
+    const TreeUtils::Node<T>* bstMinimum() const
+    {
+        return TreeUtils::bstMinimum(m_root);
+    }
+
+    const TreeUtils::Node<T>* bstMaximum() const
+    {
+        return TreeUtils::bstMaximum(m_root);
+    }
+
+private:
+
+    TreeUtils::Node<T>* m_root;
+};
