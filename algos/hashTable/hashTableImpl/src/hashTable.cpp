@@ -1,9 +1,8 @@
 #include "hashTable.h"
 
 template<typename V>
-HashTable<V>::HashTable(std::size_t size)
-: m_numberOfBuckets(size),
-  m_buckets(size)
+HashTable<V>::HashTable(const std::size_t size)
+    : m_buckets(size)
 {
 }
 
@@ -19,22 +18,22 @@ HashTable<V>::HashTable(std::size_t size)
 // a specific threshold (its max_load_factor), causing a rehash each time an expansion is needed.
 
 template<typename V>
-void HashTable<V>::Insert(const std::pair<int, V>& n)
+void HashTable<V>::Insert(const std::pair<int, V>& keyValuePair)
 {
-    auto key = n.first;
+    auto key = keyValuePair.first;
     if (Search(key)) return;
-    m_buckets[HashFunction(key)].push_back(n);
+    m_buckets[HashFunction(key)].push_back(keyValuePair);
 }
 
 template<typename V>
 bool HashTable<V>::Search(const int key) const
 {
-    if (SearchListOfNodes(key) != m_buckets[HashFunction(key)].cend()) return true;
+    if (SearchListOfPairs(key) != m_buckets[HashFunction(key)].cend()) return true;
     return false;
 }
 
 template<typename V>
-typename std::list<std::pair<int, V>>::const_iterator HashTable<V>::SearchListOfNodes(const int key) const
+typename std::list<std::pair<int, V>>::const_iterator HashTable<V>::SearchListOfPairs(const int key) const
 {
     for (auto it = m_buckets[HashFunction(key)].cbegin(); it != m_buckets[HashFunction(key)].cend(); it++)
     {
@@ -47,7 +46,7 @@ typename std::list<std::pair<int, V>>::const_iterator HashTable<V>::SearchListOf
 template<typename V>
 void HashTable<V>::Delete(const int key)
 {
-    auto it = SearchListOfNodes(key);
+    auto it = SearchListOfPairs(key);
     if(it != m_buckets[HashFunction(key)].cend()) {
         m_buckets[HashFunction(key)].erase(it);
     }
@@ -56,7 +55,7 @@ void HashTable<V>::Delete(const int key)
 template<typename V>
 void HashTable<V>::Print() const
 {
-    for (int i = 0; i < m_numberOfBuckets; i++)
+    for (int i = 0; i < m_buckets.size(); i++)
     {
         std::cout << i;
 
@@ -76,7 +75,7 @@ void HashTable<V>::Print() const
 template<typename V>
 size_t HashTable<V>::HashFunction(const int key) const
 {
-    return key % m_numberOfBuckets;
+    return key % m_buckets.size();
 }
 
 // Explicit instantiation of HashTable<std::string> to prevent linker errors

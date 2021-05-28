@@ -8,7 +8,7 @@ template<typename V>
 class HashTable
 {
 public:
-    HashTable(size_t size = 0);
+    HashTable(const size_t size = 0);
     void Insert(const std::pair<int, V>& keyValuePair);
     void Delete(const int key);
     bool Search(const int key) const;
@@ -16,7 +16,6 @@ public:
 
 private:
     size_t HashFunction(const int key) const;
-    typename std::list<std::pair<int, V>>::const_iterator SearchListOfNodes(const int key) const;
-    size_t m_numberOfBuckets;
+    typename std::list<std::pair<int, V>>::const_iterator SearchListOfPairs(const int key) const;
     std::vector<std::list<std::pair<int, V>>> m_buckets;
 };
