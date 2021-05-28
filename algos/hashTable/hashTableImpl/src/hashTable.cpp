@@ -1,6 +1,7 @@
 #include "hashTable.h"
 
-HashTable::HashTable(size_t size)
+template<typename V>
+HashTable<V>::HashTable(std::size_t size)
 : m_numberOfBuckets(size),
   m_buckets(size)
 {
@@ -17,13 +18,34 @@ HashTable::HashTable(size_t size)
 // The container automatically increases the number of buckets to keep the load factor below
 // a specific threshold (its max_load_factor), causing a rehash each time an expansion is needed.
 
-void HashTable::Insert(const Node<std::string>& n)
+template<typename V>
+void HashTable<V>::Insert(const std::pair<int, V>& n)
 {
-    if (Search(n.Key())) return;
-    m_buckets[HashFunction(n.Key())].push_back(n);
+    auto key = n.first;
+    if (Search(key)) return;
+    m_buckets[HashFunction(key)].push_back(n);
 }
 
-void HashTable::Delete(const int key)
+template<typename V>
+bool HashTable<V>::Search(const int key) const
+{
+    if (SearchListOfNodes(key) != m_buckets[HashFunction(key)].cend()) return true;
+    return false;
+}
+
+template<typename V>
+typename std::list<std::pair<int, V>>::const_iterator HashTable<V>::SearchListOfNodes(const int key) const
+{
+    for (auto it = m_buckets[HashFunction(key)].cbegin(); it != m_buckets[HashFunction(key)].cend(); it++)
+    {
+        if (key == it->first) return it;
+    }
+
+    return m_buckets[HashFunction(key)].cend();
+}
+
+template<typename V>
+void HashTable<V>::Delete(const int key)
 {
     auto it = SearchListOfNodes(key);
     if(it != m_buckets[HashFunction(key)].cend()) {
@@ -31,13 +53,8 @@ void HashTable::Delete(const int key)
     }
 }
 
-bool HashTable::Search(const int key) const
-{
-    if (SearchListOfNodes(key) != m_buckets[HashFunction(key)].cend()) return true;
-    return false;
-}
-
-void HashTable::Print() const
+template<typename V>
+void HashTable<V>::Print() const
 {
     for (int i = 0; i < m_numberOfBuckets; i++)
     {
@@ -45,7 +62,7 @@ void HashTable::Print() const
 
         for (auto it = m_buckets[i].cbegin(); it != m_buckets[i].cend(); it++)
         {
-            std::cout << "->" << it->Value();
+            std::cout << "->" << it->second;
         }
 
         std::cout << std::endl;
@@ -56,38 +73,29 @@ void HashTable::Print() const
 // can take an int or string or any other key and could generate a hash value of type
 // size_t. The modulus of this hash value w.r.t the bucket size of the hash table is
 // calculated and returned.
-size_t HashTable::HashFunction(const int key) const
+template<typename V>
+size_t HashTable<V>::HashFunction(const int key) const
 {
     return key % m_numberOfBuckets;
-}
-
-std::list<Node<std::string>>::const_iterator HashTable::SearchListOfNodes(const int key) const
-{
-    for (auto it = m_buckets[HashFunction(key)].cbegin(); it != m_buckets[HashFunction(key)].cend(); it++)
-    {
-        if (key == it->Key()) return it;
-    }
-
-    return m_buckets[HashFunction(key)].cend();
 }
 
 int main()
 {
     size_t hashTableSize = 5;
-    HashTable hashTable(hashTableSize);
-    hashTable.Insert(Node<std::string>(0, "zero"));
-    hashTable.Insert(Node<std::string>(1, "one"));
-    hashTable.Insert(Node<std::string>(2, "two"));
-    hashTable.Insert(Node<std::string>(3, "three"));
-    hashTable.Insert(Node<std::string>(4, "four"));
-    hashTable.Insert(Node<std::string>(5, "five"));
-    hashTable.Insert(Node<std::string>(6, "six"));
-    hashTable.Insert(Node<std::string>(7, "seven"));
-    hashTable.Insert(Node<std::string>(8, "eight"));
-    hashTable.Insert(Node<std::string>(9, "nine"));
-    hashTable.Insert(Node<std::string>(10, "ten"));
-    hashTable.Insert(Node<std::string>(12, "twelve"));
-    hashTable.Insert(Node<std::string>(14, "fourteen"));
+    HashTable<std::string> hashTable(hashTableSize);
+    hashTable.Insert(std::make_pair(0, "zero"));
+    hashTable.Insert(std::make_pair(1, "one"));
+    hashTable.Insert(std::make_pair(2, "two"));
+    hashTable.Insert(std::make_pair(3, "three"));
+    hashTable.Insert(std::make_pair(4, "four"));
+    hashTable.Insert(std::make_pair(5, "five"));
+    hashTable.Insert(std::make_pair(6, "six"));
+    hashTable.Insert(std::make_pair(7, "seven"));
+    hashTable.Insert(std::make_pair(8, "eight"));
+    hashTable.Insert(std::make_pair(9, "nine"));
+    hashTable.Insert(std::make_pair(10, "ten"));
+    hashTable.Insert(std::make_pair(12, "twelve"));
+    hashTable.Insert(std::make_pair(14, "fourteen"));
 
     std::cout << "\n===================================================\n" << std::endl; 
     std::cout << "This is how the hash table looks before any changes" << std::endl; 
@@ -100,9 +108,9 @@ int main()
     std::cout << "After deleting 10 and 0" << std::endl; 
     hashTable.Print();
 
-    hashTable.Insert(Node<std::string>(10, "ten"));
-    hashTable.Insert(Node<std::string>(2, "two"));
-    hashTable.Insert(Node<std::string>(15, "fifteen"));
+    hashTable.Insert(std::make_pair(10, "ten"));
+    hashTable.Insert(std::make_pair(2, "two"));
+    hashTable.Insert(std::make_pair(15, "fifteen"));
 
     std::cout << "\n===================================================\n" << std::endl; 
     std::cout << "After adding 10, 2 and 15" << std::endl;

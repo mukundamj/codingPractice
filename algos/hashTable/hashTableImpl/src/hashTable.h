@@ -4,30 +4,19 @@
 
 #pragma once
 
-template<typename ValueType>
-class Node
-{
-public:
-    Node(int key, ValueType value) : m_pair(key, value) {}
-    int Key() const { return m_pair.first; }
-    ValueType Value() const { return m_pair.second; }
- 
-private:
-    std::pair<int, ValueType> m_pair;
-};
-
+template<typename V>
 class HashTable
 {
 public:
-    HashTable(size_t size);
-    void Insert(const Node<std::string>& n);
+    HashTable(size_t size = 0);
+    void Insert(const std::pair<int, V>& keyValuePair);
     void Delete(const int key);
     bool Search(const int key) const;
     void Print() const;
 
 private:
     size_t HashFunction(const int key) const;
-    std::list<Node<std::string>>::const_iterator SearchListOfNodes(const int key) const;
+    typename std::list<std::pair<int, V>>::const_iterator SearchListOfNodes(const int key) const;
     size_t m_numberOfBuckets;
-    std::vector<std::list<Node<std::string>>> m_buckets;
+    std::vector<std::list<std::pair<int, V>>> m_buckets;
 };
