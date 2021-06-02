@@ -11,7 +11,7 @@
 // The geeks for geeks has a slightly different definition, it says peak
 // number as the which is not lesser than its neighbors. It also has a
 // O(lon(n)) algorithm
-int findPeakElement(const std::vector<int>&& nums)
+int findPeakElement(const std::vector<int>& nums)
 {
   for(int i = 0; i < nums.size(); i++)
   {
@@ -43,10 +43,10 @@ TEST(FindPeakElementTest, NoPeakElement)
 
 TEST(FindPeakElementTest, OnlyOneElement)
 {
-	EXPECT_EQ(0, findPeakElement({10}));
+    EXPECT_EQ(0, findPeakElement({10}));
 }
 
 TEST(FindPeakElementTest, NoElements)
 {
-	EXPECT_EQ(0, findPeakElement({}));
+    EXPECT_EQ(0, findPeakElement({}));
 }
