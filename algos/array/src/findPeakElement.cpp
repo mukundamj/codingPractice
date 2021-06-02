@@ -17,13 +17,14 @@ int findPeakElement(const std::vector<int>&& nums)
   {
     int prev = (i - 1 < 0) ? std::numeric_limits<int>::min() : nums[i - 1];
     int next = (i + 1 == nums.size()) ? std::numeric_limits<int>::min() : nums[i + 1];
+
     if(nums[i] > prev && nums[i] > next)
     {
       return i;
     }
   }
 
-  // If there are no elments, only one element or no peak element in the input vector return 0
+  // If there are no elements, only one element or no peak element in the input vector return 0
   return 0;
 }
 
