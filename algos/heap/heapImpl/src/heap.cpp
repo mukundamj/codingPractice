@@ -1,5 +1,7 @@
-#include heap.h
+#include "heap.h"
 
+/*
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::less<T>>
 explicit Heap::Heap(const Compare& compare, const Sequence& sequence)
     : m_compare(compare), m_sequence(sequence)
 {
@@ -63,3 +65,4 @@ void Heap::emplace(Args&&... args)
     void pop();
     void swap(Heap& rhs);
 
+*/
