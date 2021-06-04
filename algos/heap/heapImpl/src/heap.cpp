@@ -1,5 +1,19 @@
 #include "heap.h"
 
+
+/*
+ If the declarations and definitions of HeapUtils namespace are split into different files (heap.h & heap.cpp)
+ then the explicit instantiation for HeapUtils functions should be done as below after the definition of
+ HeapUtils functions.
+ 
+ template void HeapUtils::makeHeap<std::vector<int>::iterator, std::greater<std::vector<int>::value_type>>
+     (std::vector<int>::iterator, std::vector<int>::iterator, std::greater<std::vector<int>::value_type>);
+ 
+ This becomes very cumbersome to manage if the client code uses many types of iterators. To avoid management of
+ explicit template instantiation of namespace functions it is better to do declaration and definition in the
+ same file, in this case heap.h.
+*/
+
 /*
 template<typename T, typename Sequence = std::vector<T>, typename Compare = std::less<T>>
 explicit Heap::Heap(const Compare& compare, const Sequence& sequence)

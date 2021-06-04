@@ -46,7 +46,6 @@ namespace HeapUtils {
     template<typename RandomAccessIterator, typename Compare = std::greater<typename std::iterator_traits<RandomAccessIterator>::value_type>>
     void makeHeap(RandomAccessIterator first, RandomAccessIterator last, const Compare comp = Compare{})
     {
-        typedef typename std::iterator_traits<RandomAccessIterator>::value_type ValueType;
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type DistanceType;
 
         DistanceType len = last - first;
@@ -58,19 +57,23 @@ namespace HeapUtils {
             adjustHeap(first, parent, len, comp);
         }
     }
+
+    template<typename RandomAccessIterator>
+    void heapSort(RandomAccessIterator first, RandomAccessIterator last)
+    {
+        makeHeap(first, last);
+
+        typedef typename std::iterator_traits<RandomAccessIterator>::difference_type DistanceType;
+        DistanceType len = last - first;
+          
+        while(len > 1)
+        {
+            std::swap(*first, *(first + len - 1));
+            len--;
+            adjustHeap(first, DistanceType(0), len);
+        }
+    }
 }
-
-/*
-If the declaration and definition of HeapUtils namespace is split into different files
-then explicit instantiation for HeapUtils functions should be done as below.
-
-template void HeapUtils::makeHeap<std::vector<int>::iterator, std::greater<std::vector<int>::value_type>>
-    (std::vector<int>::iterator, std::vector<int>::iterator, std::greater<std::vector<int>::value_type>);
-
-This becomes very cumbersome to manage if the client code uses many types of iterators. To avoid management of
-explicit template instantiation of namespace functions it is better to do declaration and definition in the same file.
-*/
-
 
 /*
 template<typename T, typename Sequence = std::vector<T>, typename Compare = std::less<T>>
