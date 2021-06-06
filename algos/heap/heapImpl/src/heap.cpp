@@ -1,6 +1,5 @@
 #include "heap.h"
 
-
 /*
  If the declarations and definitions of HeapUtils namespace are split into different files (heap.h & heap.cpp)
  then the explicit instantiation for HeapUtils functions should be done as below after the definition of
@@ -14,69 +13,96 @@
  same file, in this case heap.h.
 */
 
-/*
-template<typename T, typename Sequence = std::vector<T>, typename Compare = std::less<T>>
-explicit Heap::Heap(const Compare& compare, const Sequence& sequence)
-    : m_compare(compare), m_sequence(sequence)
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+explicit Heap<T,Sequence,Compare>::Heap(const Sequence& sequence, const Compare& compare)
+    : m_sequence(sequence), m_compare(compare) 
 {
-    std::make_heap(m_sequence.begin(), m_sequence.end(), m_compare);
+    HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
 }
 
-explicit Heap::Heap(const Compare& compare, Sequence&& sequence)
-    : m_compare(compare), m_sequence(std::move(sequence))
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+explicit Heap<T,Sequence,Compare>::Heap(Sequence&& sequence, const Compare& compare)
+    : m_sequence(std::move(sequence)), m_compare(compare)
 {
-    std::make_heap(m_sequence.begin(), m_sequence.end(), m_compare);
+    HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
 }
 
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
 template<typename InputIterator>
-Heap::Heap(InputIterator first, InputIterator last, const Compare& compare, const Sequence& sequence)
-    : m_compare(compare), m_sequence(sequence)
+Heap<T,Sequence,Compare>::Heap(InputIterator first, InputIterator last, const Sequence& sequence, const Compare& compare)
+    : m_sequence(sequence), m_compare(compare)
 {
     m_sequence.insert(m_sequence.end(), first, last);
-    std::make_heap(m_sequence.begin(), m_sequence.end(), m_compare);
+    HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
 }
 
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
 template<typename InputIterator>
-Heap::Heap(InputIterator first, InputIterator last, const Compare& compare, Sequence&& sequence)
-    : m_compare(compare), m_sequence(std::move(sequence))
+Heap<T,Sequence,Compare>::Heap(InputIterator first, InputIterator last, Sequence&& sequence, const Compare& compare)
+    : m_sequence(std::move(sequence)), m_compare(compare)
 {
     m_sequence.insert(m_sequence.end(), first, last);
-    std::make_heap(m_sequence.begin(), m_sequence.end(), m_compare);
+    HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
 }
 
-bool Heap::empty() const
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+bool Heap<T,Sequence,Compare>::empty() const
 {
     return m_sequence.empty();
 }
 
-size_type Heap::size() const
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+sizeType Heap<T,Sequence,Compare>::size() const
 {
     return m_sequence.size();
 }
 
-const_reference Heap::top() const
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+constReference Heap<T,Sequence,Compare>::top() const
 {
-    return m_sequence.first();
+    assert(!empty());
+    return m_sequence.front();
 }
 
-void Heap::push(const value_type& v)
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+void Heap<T,Sequence,Compare>::pop()
+{
+    if(empty()) return;
+    m_sequence.front() = m_sequence.back();
+    m_sequence.pop_back();
+
+    typedef typename std::iterator_traits<Sequence::iterator>::difference_type DistanceType;
+    HeapUtils::adjustHeap(m_sequence.begin(), DistanceType(0), DistanceType(size()), m_compare);
+}
+
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+void Heap<T,Sequence,Compare>::push(const valueType& v)
 {
     m_sequence.push_back(v);
-    std::make_heap(m_sequence.begin(), m_sequence.end(), m_compare);
+    HeapUtils::adjustLastKey(m_sequence.begin(), m_sequence.end(), m_compare);
 }
 
-void Heap::push(value_type&& v);
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+void Heap<T,Sequence,Compare>::push(valueType&& v);
 {
     m_sequence.push_back(std::move(v));
-    std::make_heap(m_sequence.begin(), m_sequence.end(), m_compare);
+    HeapUtils::adjustLastKey(m_sequence.begin(), m_sequence.end(), m_compare);
 }
 
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
 template<typename... Args>
-void Heap::emplace(Args&&... args)
+void Heap<T,Sequence,Compare>::emplace(Args&&... args)
 {
-
+    m_sequence.emplace_back(std::forward<Args>(args)...);
+    HeapUtils::adjustLastKey(m_sequence.begin(), m_sequence.end(), m_compare);
 }
-    void pop();
-    void swap(Heap& rhs);
 
-*/
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
+void Heap<T,Sequence,Compare>::swap(Heap& rhs);
+{
+    std::swap(m_sequence, rhs.m_sequence);
+    std::swap(m_compare, rhs.m_compare);
+}
+
+// Explicit template instantiation
+template class Heap<int>;

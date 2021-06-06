@@ -15,6 +15,26 @@ namespace HeapUtils {
         return 2*parent + 2;
     }
 
+    template<typename Distance>
+    Distance parent(const Distance child)
+    {
+        return (child - 1)/2;
+    }
+
+    template<typename RandomAccessIterator, typename Compare = std::greater<typename std::iterator_traits<RandomAccessIterator>::value_type>>
+    void adjustLastKey(RandomAccessIterator first, RandomAccessIterator last, const Compare comp = Compare{})
+    {
+        typedef typename std::iterator_traits<RandomAccessIterator>::difference_type DistanceType;
+
+        DistanceType keyIndex = last - first - 1;
+
+        while(keyIndex > 0 && comp(*(first + keyIndex), *(first + parent(keyIndex))))
+        {
+            std::swap(*(first + parent(keyIndex)), *(first + keyIndex));
+            keyIndex = parent(keyIndex); 
+        }
+    }
+
     /*
       Since the declarations for the functions leftChild and rightChild are not included via  
       any header file it is important that are already defined before adjustHeap.
@@ -68,44 +88,37 @@ namespace HeapUtils {
           
         while(len > 1)
         {
-            std::swap(*first, *(first + len - 1));
-            len--;
+            std::swap(*first, *(first + len--));
             adjustHeap(first, DistanceType(0), len);
         }
     }
 }
 
-/*
-template<typename T, typename Sequence = std::vector<T>, typename Compare = std::less<T>>
+template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
 class Heap {
 public:
-    using size_type = Sequence::size_type;
-    using value_type = Sequence::value_type;
-    using const_reference = Sequence::const_reference;
+    using sizeType = Sequence::size_type;
+    using valueType = Sequence::value_type;
+    using constReference = Sequence::const_reference;
 
-    explicit Heap(const Compare& compare, const Sequence& sequence);
-    explicit Heap(const Compare& compare, Sequence&& sequence);
+    explicit Heap(const Sequence& sequence, const Compare& compare);
+    explicit Heap(Sequence&& sequence, const Compare& compare);
     template<typename InputIterator>
-    Heap(InputIterator first, InputIterator last, const Compare& compare, const Sequence& sequence); 
+    Heap(InputIterator first, InputIterator last, const Sequence& sequence, const Compare& compare); 
     template<typename InputIterator>
-    Heap(InputIterator first, InputIterator last, const Compare& compare, Sequence&& sequence); 
+    Heap(InputIterator first, InputIterator last, const Sequence&& sequence, const Compare& compare); 
 
     bool empty() const;
-    size_type size() const;
-    const_reference top() const;
-    void push(const value_type& v);
-    void push(value_type&& v);
+    sizeType size() const;
+    constReference top() const;
+    void pop();
+    void push(const valueType& v);
+    void push(valueType&& v);
     template<typename... Args>
     void emplace(Args&&... args);
-    void pop();
     void swap(heap& rhs);
-    //This operation will increase the value of the index to
-    //the new value. The assumption is that the value is greater
-    //than the current value of the index
-    void increaseKey(const int index, const int value);
 
 protected:
     Sequence m_sequence;
     Compare m_compare;
 };
-*/
