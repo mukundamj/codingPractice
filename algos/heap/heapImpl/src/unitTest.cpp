@@ -25,17 +25,12 @@ protected:
 TEST_F(HeapTestFixture, makeHeap)
 {
     std::cout << "===================================================" << std::endl;
-    std::cout << "\nThe vector contents before heapifying\n ";
+    std::cout << "The container contents before heapifying" << std::endl;
     print();
-
-    HeapUtils::makeHeap(m_vectorOfInt.begin(), m_vectorOfInt.end());
-
-    std::cout << "\nThe vector contents after heapifying\n ";
-    print();
-
-    EXPECT_EQ(20, m_vectorOfInt.front());
 
     Heap<int> maxHeapOfInt(m_vectorOfInt);
+    std::cout << "The container contents after heapifying" << std::endl;
+    maxHeapOfInt.print();
 
     EXPECT_FALSE(maxHeapOfInt.empty());
     EXPECT_EQ(10, maxHeapOfInt.size());
@@ -43,15 +38,29 @@ TEST_F(HeapTestFixture, makeHeap)
 
     maxHeapOfInt.pop();
     EXPECT_EQ(14, maxHeapOfInt.top());
+    std::cout << "The container contents after popping" << std::endl;
+    maxHeapOfInt.print();
 
     maxHeapOfInt.push(50);
     EXPECT_EQ(50, maxHeapOfInt.top());
+    std::cout << "The container contents after pushing 50" << std::endl;
+    maxHeapOfInt.print();
 
     maxHeapOfInt.push(40);
     EXPECT_EQ(50, maxHeapOfInt.top());
+    std::cout << "The container contents after pushing 40(rvalue)" << std::endl;
+    maxHeapOfInt.print();
+
+    int x = 51;
+    maxHeapOfInt.push(x);
+    EXPECT_EQ(51, maxHeapOfInt.top());
+    std::cout << "The container contents after pushing 51(lvalue)" << std::endl;
+    maxHeapOfInt.print();
 
     maxHeapOfInt.emplace(100);
     EXPECT_EQ(100, maxHeapOfInt.top());
+    std::cout << "The container contents after emplacing 100" << std::endl;
+    maxHeapOfInt.print();
 
     Heap<int> maxHeapOfInt_2({23, 19, 35, 12, 11, 66, 17, 13});
     EXPECT_EQ(66, maxHeapOfInt_2.top());
@@ -59,23 +68,11 @@ TEST_F(HeapTestFixture, makeHeap)
     maxHeapOfInt.swap(maxHeapOfInt_2);
     EXPECT_EQ(66, maxHeapOfInt.top());
     EXPECT_EQ(100, maxHeapOfInt_2.top());
-
+    std::cout << "The container contents after swapping" << std::endl;
+    maxHeapOfInt.print();
     std::cout << "===================================================" << std::endl;
 }
 
 TEST_F(HeapTestFixture, heapSort)
 {
-    std::cout << "===================================================" << std::endl;
-    std::cout << "\nThe vector contents before heap sort\n ";
-    print();
-
-    HeapUtils::heapSort(m_vectorOfInt.begin(), m_vectorOfInt.end());
-
-    std::cout << "\nThe vector contents after heap sort\n ";
-    print();
-
-    std::vector<int> sortedVectorOfInt{1, 2, 3, 7, 8, 9, 9, 14, 11, 20};
-    EXPECT_EQ(m_vectorOfInt, sortedVectorOfInt);
-
-    std::cout << "===================================================" << std::endl;
 }

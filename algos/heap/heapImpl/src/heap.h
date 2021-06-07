@@ -1,5 +1,6 @@
 #define pragma
 #include <iterator>
+#include <vector>
 
 namespace HeapUtils {
 
@@ -22,7 +23,7 @@ namespace HeapUtils {
     }
 
     template<typename RandomAccessIterator, typename Compare = std::greater<typename std::iterator_traits<RandomAccessIterator>::value_type>>
-    void adjustLastKey(RandomAccessIterator first, RandomAccessIterator last, const Compare comp = Compare{})
+    void adjustLastKey(RandomAccessIterator first, RandomAccessIterator last, const Compare comp = Compare())
     {
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type DistanceType;
 
@@ -40,7 +41,7 @@ namespace HeapUtils {
       any header file it is important that are already defined before adjustHeap.
     */
     template<typename RandomAccessIterator, typename Distance, typename Compare = std::greater<typename std::iterator_traits<RandomAccessIterator>::value_type>>
-    void adjustHeap(RandomAccessIterator first, const Distance parent, const Distance len, const Compare comp = Compare{})
+    void adjustHeap(RandomAccessIterator first, const Distance parent, const Distance len, const Compare comp = Compare())
     {
         Distance left = leftChild(parent);
         Distance right = rightChild(parent);
@@ -64,7 +65,7 @@ namespace HeapUtils {
       any header file it is important it is already defined before makeHeap.
     */
     template<typename RandomAccessIterator, typename Compare = std::greater<typename std::iterator_traits<RandomAccessIterator>::value_type>>
-    void makeHeap(RandomAccessIterator first, RandomAccessIterator last, const Compare comp = Compare{})
+    void makeHeap(RandomAccessIterator first, RandomAccessIterator last, const Compare comp = Compare())
     {
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type DistanceType;
 
@@ -97,26 +98,38 @@ namespace HeapUtils {
 template<typename T, typename Sequence = std::vector<T>, typename Compare = std::greater<T>>
 class Heap {
 public:
-    using sizeType = Sequence::size_type;
-    using valueType = Sequence::value_type;
-    using constReference = Sequence::const_reference;
+    using SizeType = typename Sequence::size_type;
+    using ValueType = typename Sequence::value_type;
+    using ConstReference = typename Sequence::const_reference;
 
-    explicit Heap(const Sequence& sequence, const Compare& compare);
-    explicit Heap(Sequence&& sequence, const Compare& compare);
+    explicit Heap(const Sequence& sequence, const Compare& compare = Compare());
+    explicit Heap(Sequence&& sequence, const Compare& compare = Compare());
     template<typename InputIterator>
-    Heap(InputIterator first, InputIterator last, const Sequence& sequence, const Compare& compare); 
+    Heap(InputIterator first, InputIterator last, const Sequence& sequence, const Compare& compare = Compare());
     template<typename InputIterator>
-    Heap(InputIterator first, InputIterator last, const Sequence&& sequence, const Compare& compare); 
+    Heap(InputIterator first, InputIterator last, Sequence&& sequence, const Compare& compare = Compare());
 
     bool empty() const;
-    sizeType size() const;
-    constReference top() const;
+    SizeType size() const;
+    ConstReference top() const;
     void pop();
-    void push(const valueType& v);
-    void push(valueType&& v);
+    void push(const ValueType& v);
+    void push(ValueType&& v);
+
+    /*
+     A drawback of splitting this emplace function into declaration and definition
+     is that the explicit template instantiation needs to be done in the implementation
+     file. The presence of generic arguments "Args" makes it a bit tricky.
+    */
     template<typename... Args>
-    void emplace(Args&&... args);
-    void swap(heap& rhs);
+    void emplace(Args&&... args)
+    {
+        m_sequence.emplace_back(std::forward<Args>(args)...);
+        HeapUtils::adjustLastKey(m_sequence.begin(), m_sequence.end(), m_compare);
+    }
+
+    void swap(Heap<T, Sequence, Compare>& rhs);
+    void print() const;
 
 protected:
     Sequence m_sequence;
