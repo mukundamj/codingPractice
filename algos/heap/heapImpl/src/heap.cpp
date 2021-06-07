@@ -1,5 +1,6 @@
 #include <cassert>
 #include <iostream>
+#include <deque>
 #include "heap.h"
 
 /*
@@ -32,24 +33,6 @@ template<typename T, typename Sequence, typename Compare>
 Heap<T,Sequence,Compare>::Heap(Sequence&& sequence, const Compare& compare)
     : m_sequence(std::move(sequence)), m_compare(compare)
 {
-    HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
-}
-
-template<typename T, typename Sequence, typename Compare>
-template<typename InputIterator>
-Heap<T,Sequence,Compare>::Heap(InputIterator first, InputIterator last, const Sequence& sequence, const Compare& compare)
-    : m_sequence(sequence), m_compare(compare)
-{
-    m_sequence.insert(m_sequence.end(), first, last);
-    HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
-}
-
-template<typename T, typename Sequence, typename Compare>
-template<typename InputIterator>
-Heap<T,Sequence,Compare>::Heap(InputIterator first, InputIterator last, Sequence&& sequence, const Compare& compare)
-    : m_sequence(std::move(sequence)), m_compare(compare)
-{
-    m_sequence.insert(m_sequence.end(), first, last);
     HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
 }
 
@@ -106,6 +89,11 @@ void Heap<T,Sequence,Compare>::push(typename Heap<T,Sequence,Compare>::ValueType
 template<typename T, typename Sequence, typename Compare>
 void Heap<T,Sequence,Compare>::swap(Heap<T,Sequence,Compare>& rhs)
 {
+    /*
+     Eventhough rhs.m_sequence and rhs.m_compare are private members of rhs object,
+     they can be accessed here because Heap<T,Sequence,Compare>::swap(...)
+     is a member function of Heap class. 
+    */
     std::swap(m_sequence, rhs.m_sequence);
     std::swap(m_compare, rhs.m_compare);
 }
@@ -122,3 +110,4 @@ void Heap<T,Sequence,Compare>::print() const
 
 // Explicit template instantiation
 template class Heap<int>;
+template class Heap<int, std::deque<int>>;

@@ -69,6 +69,11 @@ namespace HeapUtils {
     {
         typedef typename std::iterator_traits<RandomAccessIterator>::difference_type DistanceType;
 
+        /*
+         Iterators should be of random access type for heap properties to be implemented. Some containers
+         for example, std::list, doesn't have a random access iterator. So the HeapUtil functions defined here
+         can be used only on std::vector, std::deque and other containers which have random access iterator.
+        */
         DistanceType len = last - first;
 
         if(len < 2) return;
@@ -89,7 +94,7 @@ namespace HeapUtils {
           
         while(len > 1)
         {
-            std::swap(*first, *(first + len--));
+            std::swap(*first, *(first + --len));
             adjustHeap(first, DistanceType(0), len);
         }
     }
@@ -102,12 +107,31 @@ public:
     using ValueType = typename Sequence::value_type;
     using ConstReference = typename Sequence::const_reference;
 
-    explicit Heap(const Sequence& sequence, const Compare& compare = Compare());
-    explicit Heap(Sequence&& sequence, const Compare& compare = Compare());
+    explicit Heap(const Sequence& sequence, const Compare& compare = Compare());    //Constructor A
+
+    explicit Heap(Sequence&& sequence, const Compare& compare = Compare());    //Constructor B
+
+    /*
+     A drawback of splitting this constructor into declaration and definition is that
+     the explicit template instantiation needs to be done in the implementation file.
+     The presence of template parameters to the function makes it a bit tricky. The same
+     reasoning applies to Constructor D.
+    */
     template<typename InputIterator>
-    Heap(InputIterator first, InputIterator last, const Sequence& sequence, const Compare& compare = Compare());
+    Heap(InputIterator first, InputIterator last, const Sequence& sequence, const Compare& compare = Compare())    //Constructor C
+        : m_sequence(sequence), m_compare(compare)
+    {
+        m_sequence.insert(m_sequence.end(), first, last);
+        HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
+    }
+
     template<typename InputIterator>
-    Heap(InputIterator first, InputIterator last, Sequence&& sequence, const Compare& compare = Compare());
+    Heap(InputIterator first, InputIterator last, Sequence&& sequence, const Compare& compare = Compare())    //Constructor D
+        : m_sequence(std::move(sequence)), m_compare(compare)
+    {
+        m_sequence.insert(m_sequence.end(), first, last);
+        HeapUtils::makeHeap(m_sequence.begin(), m_sequence.end(), m_compare);
+    }
 
     bool empty() const;
     SizeType size() const;
@@ -131,7 +155,7 @@ public:
     void swap(Heap<T, Sequence, Compare>& rhs);
     void print() const;
 
-protected:
+private:
     Sequence m_sequence;
     Compare m_compare;
 };
