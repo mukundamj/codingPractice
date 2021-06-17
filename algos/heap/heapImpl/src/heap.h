@@ -22,6 +22,7 @@ namespace HeapUtils {
         return (child - 1)/2;
     }
 
+    //Time complexity T(n) = O(lg n), where n is the number of elements in the heap
     template<typename RandomAccessIterator, typename Compare = std::greater<typename std::iterator_traits<RandomAccessIterator>::value_type>>
     void adjustLastKey(RandomAccessIterator first, RandomAccessIterator last, const Compare comp = Compare())
     {
