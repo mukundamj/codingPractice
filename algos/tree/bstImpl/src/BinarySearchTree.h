@@ -13,21 +13,22 @@ struct Node
     T val;
     Node<T>* left;
     Node<T>* right;
-    Node(T x) : val(x), left(NULL), right(NULL) {}
+    Node(T x) : val(x), left(nullptr), right(nullptr) {}
 };
 
-//For destroying a tree structure postOrderTraversal is used because the child
-//nodes must be destroyed before destroying the parent node
+/*
+ For destroying a tree structure postOrderTraversal is used because the child
+ nodes must be destroyed before destroying the parent node.
+ Time complexity T(n) = O(n), where n is number of nodes in the tree.
+*/
 template <typename T = int>
 void destroyRecursively(Node<T>* root)
 {
-    if (root)
-    {
-        destroyRecursively(root->left);
-        destroyRecursively(root->right);
-        std::cout << root->val << " ";
-        delete root;
-    }
+    if (root == nullptr) return;
+    destroyRecursively(root->left);
+    destroyRecursively(root->right);
+    std::cout << root->val << " ";
+    delete root;
 }
 
 /*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
@@ -105,10 +106,11 @@ Node<T>* bstInsert(Node<T>* root, const T& val)
 }
 
 /*
-   TBD: Deleting a node is a tricky opration; it will
-   be dealt with later.
+ TBD: Deleting a node is a tricky opration; it will
+ be dealt with later.
+
+ void bstDelete(const T& val);
 */ 
-//void bstDelete(const T& val);
 
 /* Time complexity T(n) = O(h)*/
 template <typename T = int>
