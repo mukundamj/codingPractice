@@ -4,6 +4,8 @@
 //Source of above info: https://www.cprogramming.com/reference/preprocessor/pragma.html
 #pragma once
 
+#include <math.h>
+
 namespace TreeUtils
 {
 
@@ -21,7 +23,7 @@ struct Node
  nodes must be destroyed before destroying the parent node.
  Time complexity T(n) = O(n), where n is number of nodes in the tree.
 */
-template <typename T = int>
+template<typename T = int>
 void destroyRecursively(Node<T>* root)
 {
     if (root == nullptr) return;
@@ -32,7 +34,7 @@ void destroyRecursively(Node<T>* root)
 }
 
 /*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
-template <typename T = int>
+template<typename T = int>
 void preOrderTraversal(const Node<T>* root)
 {
     if(!root) return;
@@ -47,7 +49,7 @@ void preOrderTraversal(const Node<T>* root)
 /*If the tree is a binary search tree then inorder tree traversal allows us to print
 the keys in a sorted order.
 Time complexity T(n) = O(n), where n is number of nodes in the tree*/
-template <typename T = int>
+template<typename T = int>
 void inOrderTraversal(const Node<T>* root)
 {
     if(!root) return;
@@ -60,7 +62,7 @@ void inOrderTraversal(const Node<T>* root)
 }
 
 /*Time complexity T(n) = O(n), where n is number of nodes in the tree*/
-template <typename T = int>
+template<typename T = int>
 void postOrderTraversal(const Node<T>* root)
 {
     if(!root) return;
@@ -113,7 +115,7 @@ Node<T>* bstInsert(Node<T>* root, const T& val)
 */ 
 
 /* Time complexity T(n) = O(h)*/
-template <typename T = int>
+template<typename T = int>
 const Node<T>* bstSearchRecursive(const Node<T>* root, const T& val)
 {
     if(!root || root->val == val) return root;
@@ -130,7 +132,7 @@ const Node<T>* bstSearchRecursive(const Node<T>* root, const T& val)
 }
 
 /* Time complexity T(n) = O(h)*/
-template <typename T = int>
+template<typename T = int>
 const Node<T>* bstSearchIterative(const Node<T>* root, const T& val)
 {
     while(root && val != root->val)
@@ -143,7 +145,7 @@ const Node<T>* bstSearchIterative(const Node<T>* root, const T& val)
 }
 
 /*Time complexity T(n) = O(h)*/
-template <typename T = int>
+template<typename T = int>
 const Node<T>* bstMinimum(const Node<T>* root)
 {
     while(root && root->left)
@@ -155,7 +157,7 @@ const Node<T>* bstMinimum(const Node<T>* root)
 }
 
 /* Time complexity T(n) = O(h)*/
-template <typename T = int>
+template<typename T = int>
 const Node<T>* bstMaximum(const Node<T>* root)
 {
     while(root && root->right)
@@ -166,7 +168,7 @@ const Node<T>* bstMaximum(const Node<T>* root)
     return root;
 }
 
-template <typename T = int>
+template<typename T = int>
 Node<T>* bstSuccessor(const Node<T>* x);
 /*
     Refer to the page number 292 in the book, "Introduction To Algorithms"
@@ -202,7 +204,7 @@ Node<T>* bstSuccessor(const Node<T>* x);
     assumes that the node x has a parent node.
 */
 
-template <typename T = int>
+template<typename T = int>
 Node<T>* bstPredecessor(const Node<T>* x);
 /*
     The algorithm is similar to the one above
@@ -216,6 +218,49 @@ Node<T>* bstPredecessor(const Node<T>* x);
     6    y = x.p
     7 return y
 */
+
+/*
+ This function returns the total number of nodes in a complete binary tree. This algorithm is
+ not specific to binary search trees, but any binary tree which fulfills the definition of a
+ complete binary tree. As per definition a complete binary tree is the one where all tree
+ levels are completely filled except the last level and the last level has all the keys
+ as far left as possible.
+
+ The time complexity of this algorithm T(n) = O(h), where h is the height of the tree
+*/
+
+template<typename T = int>
+uint32_t countNumberOfNodesInCompleteBinaryTree(const Node<T>* root)
+{
+    if(!root) return 0;
+
+    uint32_t leftHeight = 0;
+    uint32_t rightHeight = 0;
+    const Node<T>* leftNode = root;
+    const Node<T>* rightNode = root;
+
+    while(leftNode && leftNode->left)
+    {
+        leftHeight++;
+        leftNode = leftNode->left;
+    }
+
+    while(rightNode && rightNode->right)
+    {
+        rightHeight++;
+        rightNode = rightNode->right;
+    }
+
+    if(leftHeight == rightHeight)
+    {
+        return (std::pow(2, leftHeight + 1) - 1);
+    }
+    else
+    {
+        return 1 + countNumberOfNodesInCompleteBinaryTree(root->left) + countNumberOfNodesInCompleteBinaryTree(root->right); 
+    }
+}
+
 }
 
 /*
@@ -279,6 +324,12 @@ public:
     {
         return TreeUtils::bstMaximum(m_root);
     }
+
+    const uint32_t countNumberOfNodesInCompleteBinaryTree() const
+    {
+        return TreeUtils::countNumberOfNodesInCompleteBinaryTree(m_root);
+    }
+
 
 private:
 

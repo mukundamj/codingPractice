@@ -79,3 +79,99 @@ TEST_F(TreeTestFixture, bstMaximum)
 {
     EXPECT_EQ(14, (m_tree.bstMaximum())->val);
 }
+
+TEST(CountNumberOfNodes, treeWith0Node)
+{
+    Tree<int> tree;
+    EXPECT_EQ(0, tree.countNumberOfNodesInCompleteBinaryTree());
+}
+
+TEST(CountNumberOfNodes, treeWith1Node)
+{
+    Tree<int> tree(5);
+    EXPECT_EQ(1, tree.countNumberOfNodesInCompleteBinaryTree());
+}
+
+TEST(CountNumberOfNodes, treeWith2Nodes)
+{
+    Tree<int> tree;
+    tree.bstInsert(10);
+    tree.bstInsert(5);
+
+    EXPECT_EQ(2, tree.countNumberOfNodesInCompleteBinaryTree());
+}
+
+TEST(CountNumberOfNodes, treeWith3Nodes)
+{
+    Tree<int> tree;
+    tree.bstInsert(10);
+    tree.bstInsert(5);
+    tree.bstInsert(12);
+
+    EXPECT_EQ(3, tree.countNumberOfNodesInCompleteBinaryTree());
+}
+
+TEST(CountNumberOfNodes, treeWith4Nodes)
+{
+    Tree<int> tree;
+    tree.bstInsert(10);
+    tree.bstInsert(5);
+    tree.bstInsert(12);
+    tree.bstInsert(2);
+
+    EXPECT_EQ(4, tree.countNumberOfNodesInCompleteBinaryTree());
+}
+
+TEST(CountNumberOfNodes, treeWith5Nodes)
+{
+    Tree<int> tree;
+    tree.bstInsert(10);
+    tree.bstInsert(5);
+    tree.bstInsert(12);
+    tree.bstInsert(2);
+    tree.bstInsert(8);
+
+    EXPECT_EQ(5, tree.countNumberOfNodesInCompleteBinaryTree());
+}
+
+TEST(CountNumberOfNodes, treeWith6Nodes)
+{
+    Tree<int> tree;
+    tree.bstInsert(10);
+    tree.bstInsert(5);
+    tree.bstInsert(12);
+    tree.bstInsert(2);
+    tree.bstInsert(8);
+    tree.bstInsert(11);
+
+    EXPECT_EQ(6, tree.countNumberOfNodesInCompleteBinaryTree());
+}
+
+TEST(CountNumberOfNodes, treeWith7Nodes)
+{
+    Tree<int> tree;
+    tree.bstInsert(10);
+    tree.bstInsert(5);
+    tree.bstInsert(12);
+    tree.bstInsert(2);
+    tree.bstInsert(8);
+    tree.bstInsert(11);
+    tree.bstInsert(13);
+
+    EXPECT_EQ(7, tree.countNumberOfNodesInCompleteBinaryTree());
+}
+
+TEST(CountNumberOfNodes, treeWith8Nodes)
+{
+    Tree<int> tree;
+    tree.bstInsert(10);
+    tree.bstInsert(5);
+    tree.bstInsert(12);
+    tree.bstInsert(2);
+    tree.bstInsert(8);
+    tree.bstInsert(11);
+    tree.bstInsert(13);
+    tree.bstInsert(1);
+
+    EXPECT_EQ(8, tree.countNumberOfNodesInCompleteBinaryTree());
+}
