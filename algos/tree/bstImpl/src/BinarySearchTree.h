@@ -261,6 +261,23 @@ uint32_t countNumberOfNodesInCompleteBinaryTree(const Node<T>* root)
     }
 }
 
+template<typename T = int>
+uint32_t countNumberOfNodesInAnyBinaryTree(const Node<T>* root)
+{
+    uint32_t numOfNodes = 0;
+    countNumberOfNodesInAnyBinaryTree(root, numOfNodes);
+    return numOfNodes;
+}
+
+template<typename T = int>
+void countNumberOfNodesInAnyBinaryTree(const Node<T>* root, uint32_t& numOfNodes)
+{
+    if(!root) return;
+    numOfNodes++;
+    countNumberOfNodesInAnyBinaryTree(root->left, numOfNodes);
+    countNumberOfNodesInAnyBinaryTree(root->right, numOfNodes);
+}
+
 }
 
 /*
@@ -329,6 +346,12 @@ public:
     {
         return TreeUtils::countNumberOfNodesInCompleteBinaryTree(m_root);
     }
+
+    const uint32_t countNumberOfNodesInAnyBinaryTree() const
+    {
+        return TreeUtils::countNumberOfNodesInAnyBinaryTree(m_root);
+    }
+
 
 
 private:
