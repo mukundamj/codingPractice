@@ -36,7 +36,7 @@ const std::vector<int> countSmaller(const std::vector<int>& numbers) {
 
 // This merge sort algorithm is used by the countSmaller function
 void mergeSort(const std::vector<int>& numbers, std::vector<int>& indices, std::vector<int>& countOfSmallerValues, const int start, const int end) {
-  if (start >= end) return;
+  if (start >= end) return;    //The > condition kicks in when the numbers.size() == 0, in which case start = 0 and end = -1
 
   int mid = start + (end - start) / 2;   
   mergeSort(numbers, indices, countOfSmallerValues, start, mid);
