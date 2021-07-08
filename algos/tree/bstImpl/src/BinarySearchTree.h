@@ -261,6 +261,13 @@ uint32_t countNumberOfNodesInCompleteBinaryTree(const Node<T>* root)
     }
 }
 
+/*
+ This function returns the total number of nodes in any binary tree and it is not specific to
+ only a binary search trees.
+
+ The time complexity of this algorithm T(n) = O(n), where n is the number of nodes in the tree.
+*/
+
 template<typename T = int>
 uint32_t countNumberOfNodesInAnyBinaryTree(const Node<T>* root)
 {
